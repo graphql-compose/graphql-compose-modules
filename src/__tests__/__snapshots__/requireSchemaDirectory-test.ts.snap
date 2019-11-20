@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`requireSchemaDirectory() Schema ../../examples/forTests/schema mutation has proper values 1`] = `
+Object {
+  "absPath": Any<String>,
+  "children": Object {
+    "auth": Object {
+      "absPath": Any<String>,
+      "children": Object {
+        "index": ObjectContaining {
+          "kind": "file",
+        },
+        "login": ObjectContaining {
+          "kind": "file",
+        },
+        "logout": ObjectContaining {
+          "kind": "file",
+        },
+      },
+      "kind": "dir",
+      "name": "auth",
+    },
+    "logs.nested": Object {
+      "absPath": Any<String>,
+      "children": Object {
+        "list": ObjectContaining {
+          "kind": "file",
+        },
+      },
+      "kind": "dir",
+      "name": "logs.nested",
+    },
+    "user": Object {
+      "absPath": Any<String>,
+      "children": Object {
+        "create": ObjectContaining {
+          "kind": "file",
+        },
+        "update": ObjectContaining {
+          "kind": "file",
+        },
+      },
+      "kind": "dir",
+      "name": "user",
+    },
+  },
+  "kind": "rootType",
+  "name": "mutation",
+}
+`;
+
+exports[`requireSchemaDirectory() Schema ../../examples/forTests/schema query has proper values 1`] = `
+Object {
+  "absPath": Any<String>,
+  "children": Object {
+    "index": Object {
+      "absPath": Any<String>,
+      "code": Any<Object>,
+      "kind": "file",
+      "name": "index",
+    },
+    "me": Object {
+      "absPath": Any<String>,
+      "children": Object {
+        "address.city": ObjectContaining {
+          "kind": "file",
+        },
+        "address.street": ObjectContaining {
+          "kind": "file",
+        },
+        "index": Object {
+          "absPath": Any<String>,
+          "code": Any<Object>,
+          "kind": "file",
+          "name": "index",
+        },
+        "name": ObjectContaining {
+          "kind": "file",
+        },
+      },
+      "kind": "dir",
+      "name": "me",
+    },
+  },
+  "kind": "rootType",
+  "name": "query",
+}
+`;

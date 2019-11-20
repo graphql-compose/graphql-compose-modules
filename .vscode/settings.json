@@ -1,0 +1,6 @@
+{
+  "eslint.validate": ["javascript"],
+  "javascript.validate.enable": false,
+  "javascript.autoClosingTags": false,
+  "eslint.autoFixOnSave": true,
+}

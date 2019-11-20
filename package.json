@@ -1,0 +1,36 @@
+{
+  "name": "graphql-compose-modules",
+  "private": true,
+  "version": "0.0.0-development",
+  "description": "A toolset for construction GraphQL Schema via file structure",
+  "repository": "https://github.com/graphql-compose/graphql-compose-modules",
+  "main": "lib/index",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "devDependencies": {
+    "@types/glob": "7.1.1",
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.11",
+    "@typescript-eslint/eslint-plugin": "2.8.0",
+    "@typescript-eslint/parser": "2.8.0",
+    "eslint": "6.6.0",
+    "eslint-config-prettier": "6.7.0",
+    "eslint-plugin-prettier": "3.1.1",
+    "jest": "24.9.0",
+    "prettier": "1.19.1",
+    "rimraf": "3.0.0",
+    "ts-jest": "24.1.0",
+    "typescript": "3.7.2"
+  },
+  "scripts": {
+    "watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "build": "rimraf ./lib && tsc --build tsconfig.build.json",
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "test": "npm run lint && npm run tscheck && npm run coverage",
+    "tscheck": "tsc --noEmit"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,1 @@
+export { requireSchemaDirectory } from './requireSchemaDirectory';
