@@ -31,7 +31,9 @@ export interface RequireAstDirNode extends RequireAstBaseNode {
 
 export interface RequireAstFileNode extends RequireAstBaseNode {
   kind: 'file';
-  code: NodeModule;
+  code: {
+    default?: Object;
+  };
 }
 
 export interface RequireAstResult {
