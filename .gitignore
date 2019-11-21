@@ -46,3 +46,5 @@ packages/mongodb-memory-server-core/lib
 coverage
 .nyc_output
 package-lock.json
+
+dist
