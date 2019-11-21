@@ -7,37 +7,37 @@ interface Options {
   exclude?: RegExp | ((path: string, filename: string) => boolean);
 }
 
-type RequireNodeKinds = 'rootType' | 'dir' | 'file';
+type RequireAstNodeKinds = 'rootType' | 'dir' | 'file';
 
-interface RequireBaseNode {
-  kind: RequireNodeKinds;
+interface RequireAstBaseNode {
+  kind: RequireAstNodeKinds;
   name: string;
   absPath: string;
 }
 
-interface RequireRootTypeNode extends RequireBaseNode {
+export interface RequireAstRootTypeNode extends RequireAstBaseNode {
   kind: 'rootType';
   children: {
-    [key: string]: RequireDirNode | RequireFileNode;
+    [key: string]: RequireAstDirNode | RequireAstFileNode;
   };
 }
 
-interface RequireDirNode extends RequireBaseNode {
+export interface RequireAstDirNode extends RequireAstBaseNode {
   kind: 'dir';
   children: {
-    [key: string]: RequireDirNode | RequireFileNode;
+    [key: string]: RequireAstDirNode | RequireAstFileNode;
   };
 }
 
-interface RequireFileNode extends RequireBaseNode {
+export interface RequireAstFileNode extends RequireAstBaseNode {
   kind: 'file';
   code: NodeModule;
 }
 
-interface RequireResult {
-  query?: RequireRootTypeNode;
-  mutation?: RequireRootTypeNode;
-  subscription?: RequireRootTypeNode;
+export interface RequireAstResult {
+  query?: RequireAstRootTypeNode;
+  mutation?: RequireAstRootTypeNode;
+  subscription?: RequireAstRootTypeNode;
 }
 
 export const defaultOptions = {
@@ -48,12 +48,12 @@ export function requireSchemaDirectory(
   m: NodeModule,
   path: string,
   options: Options = defaultOptions
-): RequireResult {
+): RequireAstResult {
   // if no path was passed in, assume the equivelant of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
   path = !path ? dirname(m.filename) : resolve(dirname(m.filename), path);
 
-  const result = {} as RequireResult;
+  const result = {} as RequireAstResult;
 
   fs.readdirSync(path).forEach((filename) => {
     const absPath = join(path, filename);
@@ -63,14 +63,14 @@ export function requireSchemaDirectory(
       const re = /^(query|mutation|subscription)(\.(.*))?$/i;
       const found = dirName.match(re);
       if (found) {
-        const opType = found[1].toLowerCase() as keyof RequireResult;
+        const opType = found[1].toLowerCase() as keyof RequireAstResult;
         if (!result[opType])
           result[opType] = {
             kind: 'rootType',
             name: opType,
             absPath,
             children: {},
-          } as RequireRootTypeNode;
+          } as RequireAstRootTypeNode;
 
         const subField = found[3]; // any part after dot (eg for `query.me` will be `me`)
         if (subField) {
@@ -93,8 +93,8 @@ export function requireSubDirectory(
   m: NodeModule,
   path: string,
   options: Options = defaultOptions
-): RequireDirNode {
-  const result: RequireDirNode = {
+): RequireAstDirNode {
+  const result: RequireAstDirNode = {
     kind: 'dir',
     absPath: resolve(dirname(m.filename), path),
     name: basename(path),
