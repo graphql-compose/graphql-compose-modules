@@ -1,0 +1,13 @@
+{
+  "name": "example-server",
+  "main": "dist/index.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "watch": "ts-node-dev --no-notify --watch ./schema ./index.ts"
+  },
+  "dependencies": {
+    "ts-node": "^8.5.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.2"
+  }
+}
