@@ -81,6 +81,16 @@ Object {
       "kind": "dir",
       "name": "me",
     },
+    "some.type.index": Any<Object>,
+    "user": Object {
+      "absPath": Any<String>,
+      "children": Object {
+        "extendedData": Any<Object>,
+        "index": Any<Object>,
+      },
+      "kind": "dir",
+      "name": "user",
+    },
   },
   "kind": "rootType",
   "name": "query",

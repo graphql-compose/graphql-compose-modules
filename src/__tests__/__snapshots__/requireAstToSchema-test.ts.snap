@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`requireToSchema() Schema ../../examples/forTests/schema schema 1`] = `
+exports[`requireAstToSchema() Schema ../../examples/forTests/schema schema 1`] = `
 "# Provides default value for input field.
 directive @default(value: JSON!) on INPUT_FIELD_DEFINITION
 
@@ -43,6 +43,26 @@ type MutationUser {
 
 type Query {
   me: MeType
+  some: QuerySome
+  user: UserAwesomeType
+}
+
+type QuerySome {
+  type: SomeIndexFileType
+}
+
+type SomeIndexFileType {
+  awesomeValue: String
+}
+
+type UserAwesomeType {
+  firstName: String
+  lastName: String
+  extendedData: UserExtendedData
+}
+
+type UserExtendedData {
+  starsCount: Int
 }
 "
 `;
