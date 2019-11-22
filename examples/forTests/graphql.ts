@@ -2,10 +2,10 @@
 import express from 'express';
 import path from 'path';
 import { ApolloServer } from 'apollo-server-express';
-import { requireSchemaDirectory } from '../../../src/requireSchemaDirectory';
-import { requireToSchema } from '../../../src/requireToSchema';
+import { requireSchemaDirectory } from '../../src/requireSchemaDirectory';
+import { requireToSchema } from '../../src/requireToSchema';
 
-const ast = requireSchemaDirectory(module, path.resolve(__dirname, '../schema'));
+const ast = requireSchemaDirectory(module, path.resolve(__dirname, './schema'));
 const sc = requireToSchema(ast);
 const schema = sc.buildSchema();
 
