@@ -1,14 +1,10 @@
-import express from 'express';
-import getGraphQLRouter from './graphql';
+import { ApolloServer } from 'apollo-server';
+import { schema } from './schema';
 
-const app = express();
-
-app.use(getGraphQLRouter());
-
-app.use('/', (req, res) => {
-  res.redirect('/graphql');
+const server = new ApolloServer({
+  schema,
 });
 
-app.listen({ port: 4000 }, () => {
-  console.log(`🚀 !!! Server ready at http://localhost:4000`);
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
 });
