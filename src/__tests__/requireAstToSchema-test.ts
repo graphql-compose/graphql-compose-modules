@@ -1,12 +1,12 @@
 import { requireSchemaDirectory } from '../requireSchemaDirectory';
-import { requireToSchema } from '../requireToSchema';
+import { requireAstToSchema } from '../requireAstToSchema';
 import { SchemaComposer } from 'graphql-compose';
 import { printSchema } from 'graphql/utilities';
 
-describe('requireToSchema()', () => {
+describe('requireAstToSchema()', () => {
   describe('Schema ../../examples/forTests/schema', () => {
     const ast = requireSchemaDirectory(module, '../../examples/forTests/schema');
-    const sc = requireToSchema(ast);
+    const sc = requireAstToSchema(ast);
 
     it('should return schema composer', () => {
       expect(sc).toBeInstanceOf(SchemaComposer);

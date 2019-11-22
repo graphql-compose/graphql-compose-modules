@@ -32,7 +32,7 @@ export interface RequireAstDirNode extends RequireAstBaseNode {
 export interface RequireAstFileNode extends RequireAstBaseNode {
   kind: 'file';
   code: {
-    default?: Object;
+    default?: any;
   };
 }
 
@@ -48,7 +48,7 @@ export const defaultOptions = {
 
 export function requireSchemaDirectory(
   m: NodeModule,
-  path: string,
+  path?: string,
   options: Options = defaultOptions
 ): RequireAstResult {
   // if no path was passed in, assume the equivelant of __dirname from caller

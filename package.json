@@ -10,7 +10,7 @@
     "lib"
   ],
   "peerDependencies": {
-    "graphql-compose": "^7.0.0"
+    "graphql-compose": "^7.6.0"
   },
   "devDependencies": {
     "@types/glob": "7.1.1",
@@ -18,16 +18,16 @@
     "@types/node": "12.12.11",
     "@typescript-eslint/eslint-plugin": "2.8.0",
     "@typescript-eslint/parser": "2.8.0",
-    "apollo-server-express": "^2.4.8",
+    "apollo-server": "^2.9.12",
     "eslint": "6.6.0",
     "eslint-config-prettier": "6.7.0",
     "eslint-plugin-prettier": "3.1.1",
     "graphql": "^14.0.0",
-    "graphql-compose": "^7.4.3",
+    "graphql-compose": "^7.6.0",
     "jest": "24.9.0",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
-    "ts-jest": "24.1.0",
+    "ts-jest": "24.2.0",
     "typescript": "3.7.2"
   },
   "scripts": {
@@ -37,7 +37,10 @@
     "lint": "eslint 'src/**/*.{js,ts}'",
     "test": "npm run lint && npm run tscheck && npm run coverage",
     "tscheck": "tsc --noEmit",
-    "start-example": "cd ./examples/forTests && yarn install && yarn watch"
+    "start-example1": "cd ./examples/simple && yarn install && yarn watch",
+    "start-example2": "cd ./examples/forTests && yarn install && yarn watch"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dedent": "^0.7.0"
+  }
 }

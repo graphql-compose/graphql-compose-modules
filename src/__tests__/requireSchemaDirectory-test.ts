@@ -29,6 +29,14 @@ describe('requireSchemaDirectory()', () => {
             },
           },
           index: { kind: 'file', absPath: expect.any(String), code: expect.any(Object) },
+          'some.type.index': expect.any(Object),
+          user: {
+            absPath: expect.any(String),
+            children: {
+              extendedData: expect.any(Object),
+              index: expect.any(Object),
+            },
+          },
         },
       });
     });
