@@ -42,9 +42,9 @@ export interface RequireAstResult {
   subscription?: RequireAstRootTypeNode;
 }
 
-export const defaultOptions = {
+export const defaultOptions: Options = {
   extensions: ['js', 'ts'],
-} as Options;
+};
 
 export function requireSchemaDirectory(
   m: NodeModule,
@@ -53,12 +53,12 @@ export function requireSchemaDirectory(
 ): RequireAstResult {
   // if no path was passed in, assume the equivelant of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
-  path = !path ? dirname(m.filename) : resolve(dirname(m.filename), path);
+  const schemaPath = !path ? dirname(m.filename) : resolve(dirname(m.filename), path);
 
   const result = {} as RequireAstResult;
 
-  fs.readdirSync(path).forEach((filename) => {
-    const absPath = join(path, filename);
+  fs.readdirSync(schemaPath).forEach((filename) => {
+    const absPath = join(schemaPath, filename);
 
     if (fs.statSync(absPath).isDirectory()) {
       const dirName = filename;

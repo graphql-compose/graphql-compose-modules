@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "composite": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true,
   },
   "files": [],
   "include": [],
   "exclude": ["**/node_modules"],
-  "references": [{ "path": "./tsconfig.build.json" }, { "path": "./tsconfig.test.json" }]
+  "references": [{ "path": "./tsconfig.build.json" }]
 }
