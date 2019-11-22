@@ -3,14 +3,11 @@
   "main": "dist/index.js",
   "license": "UNLICENSED",
   "scripts": {
-    "watch": "nodemon --watch './**/*.ts' --exec 'ts-node' index.ts"
+    "watch": "ts-node-dev --no-notify --watch ./schema ./index.ts"
   },
-  "devDependencies": {
-    "@types/express": "^4.17.2",
-    "concurrently": "^4.1.0",
-    "express": "^4.16.4",
-    "nodemon": "^1.19.0",
+  "dependencies": {
     "ts-node": "^8.5.2",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.2"
   }
 }
