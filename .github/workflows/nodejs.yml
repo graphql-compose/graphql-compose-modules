@@ -1,7 +1,7 @@
-name: Node CI
+name: Build CI
 on: [push]
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,22 +13,34 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install modules
-      run: |
-        yarn install
+      run: yarn install
     - name: Test
-      run: |
-        yarn test
+      run: yarn test
       env:
         CI: true
     - name: Build
-      run: |
-        yarn build
-      env:
-        CI: true
-    - name: Semantic Release
+      run: yarn build
+    - name: Coverage
       if: startsWith(matrix.node-version, '12.')
+      run: bash <(curl -s https://codecov.io/bash)
+  
+  
+  publish:
+    needs: [tests]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install modules
+      run: yarn install
+    - name: Build
+      run: yarn build
+    - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
-      id: semantic   # Need an `id` for output variables
+      id: semantic
       with:
         branch: master
       env:
