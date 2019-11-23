@@ -12,7 +12,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install modules
+    - name: Install node_modules
       run: yarn install
     - name: Test
       run: yarn test
@@ -20,7 +20,7 @@ jobs:
         CI: true
     - name: Build
       run: yarn build
-    - name: Coverage
+    - name: Send coverage (only Node 12.x)
       if: startsWith(matrix.node-version, '12.')
       run: bash <(curl -s https://codecov.io/bash)
       env:
@@ -37,15 +37,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: Install modules
+    - name: Install node_modules
       run: yarn install
     - name: Build
       run: yarn build
-    - name: Semantic Release
-      uses: cycjimmy/semantic-release-action@v2
-      id: semantic
-      with:
-        branch: master
+    - name: Semantic Release (publish to npm)
+      run: yarn semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
