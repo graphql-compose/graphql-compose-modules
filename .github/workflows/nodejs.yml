@@ -12,14 +12,21 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Test & Build
+    - name: Install modules
       run: |
         yarn install
+    - name: Test
+      run: |
         yarn test
+      env:
+        CI: true
+    - name: Build
+      run: |
         yarn build
       env:
         CI: true
     - name: Semantic Release
+      if: startsWith(matrix.node-version, '12.')
       uses: cycjimmy/semantic-release-action@v2
       id: semantic   # Need an `id` for output variables
       with:
