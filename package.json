@@ -14,26 +14,27 @@
     "dedent": "^0.7.0"
   },
   "peerDependencies": {
-    "graphql-compose": "^7.6.0"
+    "graphql-compose": "^7.6.1"
   },
   "devDependencies": {
     "@types/dedent": "^0.7.0",
     "@types/glob": "7.1.1",
     "@types/jest": "24.0.23",
-    "@types/node": "12.12.11",
+    "@types/node": "12.12.12",
     "@typescript-eslint/eslint-plugin": "2.8.0",
     "@typescript-eslint/parser": "2.8.0",
     "apollo-server": "^2.9.12",
-    "eslint": "6.6.0",
+    "eslint": "6.7.1",
     "eslint-config-prettier": "6.7.0",
     "eslint-plugin-prettier": "3.1.1",
     "graphql": "^14.0.0",
-    "graphql-compose": "^7.6.0",
+    "graphql-compose": "^7.6.1",
     "jest": "24.9.0",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
     "semantic-release": "^15.13.31",
     "ts-jest": "24.2.0",
+    "ts-node": "^8.5.2",
     "typescript": "3.7.2"
   },
   "scripts": {
@@ -45,7 +46,8 @@
     "tscheck": "tsc --noEmit",
     "semantic-release": "semantic-release",
     "start-example1": "cd ./examples/simple && yarn install && yarn watch",
-    "start-example2": "cd ./examples/forTests && yarn install && yarn watch"
+    "start-example2": "cd ./examples/simpleNamespaces && yarn install && yarn watch",
+    "start-example3": "cd ./examples/forTests && yarn install && yarn watch"
   },
   "collective": {
     "type": "opencollective",
