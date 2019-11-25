@@ -115,7 +115,10 @@ export function requireSubDirectory(
     const absPath = join(path, filename);
 
     const stat = fs.statSync(absPath);
-    if (stat.isDirectory()) {
+    if (skipName(filename)) {
+      // just skip file/dir
+      // TODO: add debug here
+    } else if (stat.isDirectory()) {
       // this node is a directory; recurse
       if (result.children[filename]) {
         throw new Error(
@@ -146,10 +149,16 @@ export function requireSubDirectory(
   return result;
 }
 
+function skipName(filename: string): boolean {
+  return /^__.*/i.test(filename);
+}
+
 function checkFileInclusion(absPath: string, filename: string, options: Options): boolean {
   return (
     // verify file has valid extension
     new RegExp('\\.(' + options.extensions.join('|') + ')$', 'i').test(filename) &&
+    // Hardcoded skip file extensions
+    !new RegExp('(\\.d\\.ts)$', 'i').test(filename) &&
     // if options.include is a RegExp, evaluate it and make sure the path passes
     !(options.include && options.include instanceof RegExp && !options.include.test(absPath)) &&
     // if options.include is a function, evaluate it and make sure the path passes

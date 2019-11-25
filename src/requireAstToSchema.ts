@@ -51,7 +51,9 @@ function createFields(
   const name = ast.name;
   if (!/^[._a-zA-Z0-9]+$/.test(name)) {
     throw new Error(
-      `You provide incorrect field name '${name}'. It should meet RegExp([._a-zA-Z0-9]+) for '${ast.absPath}'`
+      `You provide incorrect ${
+        ast.kind === 'file' ? 'file' : 'directory'
+      } name '${name}', it should meet RegExp(/^[._a-zA-Z0-9]+$/) for '${ast.absPath}'`
     );
   }
   const typename = getTypename(ast);
