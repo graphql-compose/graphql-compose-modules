@@ -18,11 +18,28 @@ import {
 import dedent from 'dedent';
 import { GraphQLObjectType } from 'graphql';
 
+export interface AstOptions {
+  schemaComposer?: SchemaComposer<any>;
+}
+
 export function requireAstToSchema<TContext = any>(
   ast: RequireAstResult,
-  schemaComposer?: SchemaComposer<TContext>
+  opts: AstOptions = {}
 ): SchemaComposer<TContext> {
-  const sc = schemaComposer || new SchemaComposer<TContext>();
+  let sc: SchemaComposer<any>;
+
+  if (opts?.schemaComposer) {
+    if (!opts.schemaComposer) {
+      throw new Error(dedent`
+        Provided option 'schemaComposer' should be an instance of SchemaComposer class from 'graphql-compose' package. 
+        Recieved:
+          ${inspect(opts.schemaComposer)}
+      `);
+    }
+    sc = opts.schemaComposer;
+  } else {
+    sc = new SchemaComposer();
+  }
 
   if (ast.query) populateRoot(sc, 'Query', ast.query);
   if (ast.mutation) populateRoot(sc, 'Mutation', ast.mutation);

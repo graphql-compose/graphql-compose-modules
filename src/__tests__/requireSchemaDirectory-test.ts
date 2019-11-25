@@ -2,7 +2,7 @@ import { requireSchemaDirectory } from '../requireSchemaDirectory';
 
 describe('requireSchemaDirectory()', () => {
   describe('Schema ../../examples/forTests/schema', () => {
-    const ast = requireSchemaDirectory(module, '../../examples/forTests/schema');
+    const ast = requireSchemaDirectory(module, { relativePath: '../../examples/forTests/schema' });
 
     it('should return root types', () => {
       expect(Object.keys(ast)).toEqual(expect.arrayContaining(['query', 'mutation']));

@@ -5,7 +5,7 @@ import { printSchema } from 'graphql/utilities';
 
 describe('requireAstToSchema()', () => {
   describe('Schema ../../examples/forTests/schema', () => {
-    const ast = requireSchemaDirectory(module, '../../examples/forTests/schema');
+    const ast = requireSchemaDirectory(module, { relativePath: '../../examples/forTests/schema' });
     const sc = requireAstToSchema(ast);
 
     it('should return schema composer', () => {

@@ -1,8 +1,9 @@
 import fs from 'fs';
 import { join, resolve, dirname, basename } from 'path';
 
-interface Options {
-  extensions: string[];
+export interface RequireOptions {
+  relativePath?: string;
+  extensions?: string[];
   include?: RegExp | ((path: string, filename: string) => boolean);
   exclude?: RegExp | ((path: string, filename: string) => boolean);
 }
@@ -42,18 +43,19 @@ export interface RequireAstResult {
   subscription?: RequireAstRootTypeNode;
 }
 
-export const defaultOptions: Options = {
+export const defaultOptions: RequireOptions = {
   extensions: ['js', 'ts'],
 };
 
 export function requireSchemaDirectory(
   m: NodeModule,
-  path?: string,
-  options: Options = defaultOptions
+  options: RequireOptions = defaultOptions
 ): RequireAstResult {
   // if no path was passed in, assume the equivelant of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
-  const schemaPath = !path ? dirname(m.filename) : resolve(dirname(m.filename), path);
+  const schemaPath = options?.relativePath
+    ? resolve(dirname(m.filename), options.relativePath)
+    : dirname(m.filename);
 
   const result = {} as RequireAstResult;
 
@@ -94,7 +96,7 @@ export function requireSchemaDirectory(
 export function requireSubDirectory(
   m: NodeModule,
   path: string,
-  options: Options = defaultOptions
+  options: RequireOptions = defaultOptions
 ): RequireAstDirNode {
   const result: RequireAstDirNode = {
     kind: 'dir',
@@ -153,7 +155,7 @@ function skipName(filename: string): boolean {
   return /^__.*/i.test(filename);
 }
 
-function checkFileInclusion(absPath: string, filename: string, options: Options): boolean {
+function checkFileInclusion(absPath: string, filename: string, options: RequireOptions): boolean {
   return (
     // verify file has valid extension
     new RegExp('\\.(' + options.extensions.join('|') + ')$', 'i').test(filename) &&
