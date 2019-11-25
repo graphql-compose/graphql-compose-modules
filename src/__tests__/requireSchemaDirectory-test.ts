@@ -35,6 +35,7 @@ describe('requireSchemaDirectory()', () => {
             children: {
               extendedData: expect.any(Object),
               index: expect.any(Object),
+              roles: expect.any(Object),
             },
           },
         },

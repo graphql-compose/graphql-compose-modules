@@ -59,6 +59,7 @@ type UserAwesomeType {
   firstName: String
   lastName: String
   extendedData: UserExtendedData
+  roles: [String]
 }
 
 type UserExtendedData {

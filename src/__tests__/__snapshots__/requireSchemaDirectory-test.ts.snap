@@ -87,6 +87,7 @@ Object {
       "children": Object {
         "extendedData": Any<Object>,
         "index": Any<Object>,
+        "roles": Any<Object>,
       },
       "kind": "dir",
       "name": "user",

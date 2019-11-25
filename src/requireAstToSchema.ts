@@ -186,7 +186,7 @@ function prepareFieldConfig(
 
   if (!fc.type || !isSomeOutputTypeDefinition(fc.type)) {
     throw new Error(dedent`
-      Module MUST return FieldConfig with TYPE property in '${ast.absPath}'. 
+      Module MUST return FieldConfig with correct 'type: xxx' property in '${ast.absPath}'. 
       Eg:
         export default {
           type: 'String'
@@ -198,9 +198,14 @@ function prepareFieldConfig(
 }
 
 function isSomeOutputTypeDefinition(type: any): boolean {
-  return (
-    (typeof type === 'string' &&
-      (isSomeOutputTypeDefinitionString(type) || isTypeNameString(type))) ||
-    isComposeOutputType(type)
-  );
+  if (typeof type === 'string') {
+    // type: 'String'
+    return isSomeOutputTypeDefinitionString(type) || isTypeNameString(type);
+  } else if (Array.isArray(type)) {
+    // type: ['String']
+    return isSomeOutputTypeDefinition(type[0]);
+  } else {
+    // type: 'type User { name: String }'
+    return isComposeOutputType(type);
+  }
 }
