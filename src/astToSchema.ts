@@ -9,12 +9,7 @@ import {
   isSomeOutputTypeDefinitionString,
   inspect,
 } from 'graphql-compose';
-import {
-  RequireAstResult,
-  RequireAstRootTypeNode,
-  RequireAstDirNode,
-  RequireAstFileNode,
-} from './requireSchemaDirectory';
+import { AstResult, AstRootTypeNode, AstDirNode, AstFileNode } from './directoryToAst';
 import dedent from 'dedent';
 import { GraphQLObjectType } from 'graphql';
 
@@ -22,8 +17,8 @@ export interface AstOptions {
   schemaComposer?: SchemaComposer<any>;
 }
 
-export function requireAstToSchema<TContext = any>(
-  ast: RequireAstResult,
+export function astToSchema<TContext = any>(
+  ast: AstResult,
   opts: AstOptions = {}
 ): SchemaComposer<TContext> {
   let sc: SchemaComposer<any>;
@@ -51,7 +46,7 @@ export function requireAstToSchema<TContext = any>(
 function populateRoot(
   sc: SchemaComposer<any>,
   rootName: 'Query' | 'Mutation' | 'Subscription',
-  astRootNode: RequireAstRootTypeNode
+  astRootNode: AstRootTypeNode
 ) {
   const tc = sc[rootName];
   Object.keys(astRootNode.children).forEach((key) => {
@@ -59,12 +54,14 @@ function populateRoot(
   });
 }
 
-function createFields(
+export function createFields(
   sc: SchemaComposer<any>,
-  ast: RequireAstDirNode | RequireAstFileNode,
+  ast: AstDirNode | AstFileNode | void,
   prefix: string,
   parent: ObjectTypeComposer
 ): void {
+  if (!ast) return;
+
   const name = ast.name;
   if (!/^[._a-zA-Z0-9]+$/.test(name)) {
     throw new Error(
@@ -73,14 +70,13 @@ function createFields(
       } name '${name}', it should meet RegExp(/^[._a-zA-Z0-9]+$/) for '${ast.absPath}'`
     );
   }
-  const typename = getTypename(ast);
 
   if (ast.kind === 'file') {
     if (name !== 'index') {
       if (name.endsWith('.index')) {
         const fieldName = name.slice(0, -6); // remove ".index" from field name
         parent.addNestedFields({
-          [fieldName]: prepareNamespaceFieldConfig(sc, ast, prefix, typename),
+          [fieldName]: prepareNamespaceFieldConfig(sc, ast, `${prefix}${getTypename(ast)}`),
         });
       } else {
         parent.addNestedFields({
@@ -92,11 +88,12 @@ function createFields(
   }
 
   if (ast.kind === 'dir') {
+    const typename = `${prefix}${getTypename(ast)}`;
     let fc: ObjectTypeComposerFieldConfig<any, any>;
     if (ast.children['index'] && ast.children['index'].kind === 'file') {
-      fc = prepareNamespaceFieldConfig(sc, ast.children['index'], prefix, typename);
+      fc = prepareNamespaceFieldConfig(sc, ast.children['index'], typename);
     } else {
-      fc = { type: sc.createObjectTC(`${prefix}${typename}`) };
+      fc = { type: sc.createObjectTC(typename) };
     }
 
     parent.addNestedFields({
@@ -107,12 +104,12 @@ function createFields(
     });
 
     Object.keys(ast.children).forEach((key) => {
-      createFields(sc, ast.children[key], name, fc.type as any);
+      createFields(sc, ast.children[key], typename, fc.type as any);
     });
   }
 }
 
-function getTypename(ast: RequireAstDirNode | RequireAstFileNode): string {
+function getTypename(ast: AstDirNode | AstFileNode): string {
   const name = ast.name;
 
   if (name.indexOf('.') !== -1) {
@@ -134,8 +131,7 @@ function getTypename(ast: RequireAstDirNode | RequireAstFileNode): string {
 
 function prepareNamespaceFieldConfig(
   sc: SchemaComposer<any>,
-  ast: RequireAstFileNode,
-  prefix: string,
+  ast: AstFileNode,
   typename: string
 ): ObjectTypeComposerFieldConfig<any, any> {
   if (!ast.code.default) {
@@ -152,7 +148,7 @@ function prepareNamespaceFieldConfig(
   const fc: any = ast.code.default;
 
   if (!fc.type) {
-    fc.type = sc.createObjectTC(`${prefix}${typename}`);
+    fc.type = sc.createObjectTC(typename);
   } else {
     if (typeof fc.type === 'string') {
       if (!isOutputTypeDefinitionString(fc.type) && !isTypeNameString(fc.type)) {
@@ -188,7 +184,7 @@ function prepareNamespaceFieldConfig(
 
 function prepareFieldConfig(
   sc: SchemaComposer<any>,
-  ast: RequireAstFileNode
+  ast: AstFileNode
 ): ObjectTypeComposerFieldConfig<any, any> {
   const fc = ast.code.default as any;
 
