@@ -1,5 +1,5 @@
 import { ApolloServer } from 'apollo-server';
-import { schema } from './schema';
+import { schema } from '../../src/__tests__/__testSchema__';
 
 const server = new ApolloServer({
   schema,

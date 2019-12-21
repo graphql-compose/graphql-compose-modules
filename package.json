@@ -47,7 +47,7 @@
     "semantic-release": "semantic-release",
     "start-example1": "cd ./examples/simple && yarn install && yarn watch",
     "start-example2": "cd ./examples/simpleNamespaces && yarn install && yarn watch",
-    "start-example3": "cd ./examples/forTests && yarn install && yarn watch"
+    "start-example3": "cd ./examples/testSchema && yarn install && yarn watch"
   },
   "collective": {
     "type": "opencollective",
