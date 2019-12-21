@@ -1,21 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`requireAstToSchema() Schema ../../examples/forTests/schema schema 1`] = `
+exports[`astToSchema() Schema ./__testSchema__ schema 1`] = `
 "# Provides default value for input field.
 directive @default(value: JSON!) on INPUT_FIELD_DEFINITION
 
 # The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 scalar JSON
-
-type MeType {
-  address: MeTypeAddress
-  name: Boolean
-}
-
-type MeTypeAddress {
-  city: Boolean
-  street: Boolean
-}
 
 type Mutation {
   logs: MutationLogs
@@ -26,6 +16,11 @@ type Mutation {
 type MutationAuth {
   login: Boolean
   logout: Boolean
+  nested: MutationAuthNested
+}
+
+type MutationAuthNested {
+  method: Boolean
 }
 
 type MutationLogs {
@@ -42,12 +37,34 @@ type MutationUser {
 }
 
 type Query {
-  me: MeType
+  field: String
+  me(arg: Int): QueryMe
   some: QuerySome
   user: UserAwesomeType
+  auth: QueryAuth
+}
+
+type QueryAuth {
+  isLoggedIn: Boolean
+  nested: QueryAuthNested
+}
+
+type QueryAuthNested {
+  method: Boolean
+}
+
+type QueryMe {
+  address: QueryMeAddress
+  name: String
+}
+
+type QueryMeAddress {
+  city: Boolean
+  street: Boolean
 }
 
 type QuerySome {
+  nested: Int
   type: SomeIndexFileType
 }
 

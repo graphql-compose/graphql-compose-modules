@@ -1,8 +1,8 @@
-import { requireSchemaDirectory } from '../requireSchemaDirectory';
+import { directoryToAst } from '../directoryToAst';
 
-describe('requireSchemaDirectory()', () => {
-  describe('Schema ../../examples/forTests/schema', () => {
-    const ast = requireSchemaDirectory(module, { relativePath: '../../examples/forTests/schema' });
+describe('directoryToAst()', () => {
+  describe('Schema ./__testSchema__', () => {
+    const ast = directoryToAst(module, { relativePath: './__testSchema__' });
 
     it('should return root types', () => {
       expect(Object.keys(ast)).toEqual(expect.arrayContaining(['query', 'mutation']));
@@ -14,6 +14,8 @@ describe('requireSchemaDirectory()', () => {
         kind: 'rootType',
         absPath: expect.any(String),
         children: {
+          auth: expect.objectContaining({ kind: 'dir' }),
+          field: expect.objectContaining({ kind: 'file' }),
           me: {
             absPath: expect.any(String),
             children: {
@@ -29,6 +31,7 @@ describe('requireSchemaDirectory()', () => {
             },
           },
           index: { kind: 'file', absPath: expect.any(String), code: expect.any(Object) },
+          'some.nested': expect.objectContaining({ kind: 'file' }),
           'some.type.index': expect.any(Object),
           user: {
             absPath: expect.any(String),
@@ -54,6 +57,7 @@ describe('requireSchemaDirectory()', () => {
               index: expect.objectContaining({ kind: 'file' }),
               login: expect.objectContaining({ kind: 'file' }),
               logout: expect.objectContaining({ kind: 'file' }),
+              nested: expect.objectContaining({ kind: 'dir' }),
             },
           },
           user: {

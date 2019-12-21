@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`requireSchemaDirectory() Schema ../../examples/forTests/schema mutation has proper values 1`] = `
+exports[`directoryToAst() Schema ./__testSchema__ mutation has proper values 1`] = `
 Object {
   "absPath": Any<String>,
   "children": Object {
@@ -15,6 +15,9 @@ Object {
         },
         "logout": ObjectContaining {
           "kind": "file",
+        },
+        "nested": ObjectContaining {
+          "kind": "dir",
         },
       },
       "kind": "dir",
@@ -49,10 +52,16 @@ Object {
 }
 `;
 
-exports[`requireSchemaDirectory() Schema ../../examples/forTests/schema query has proper values 1`] = `
+exports[`directoryToAst() Schema ./__testSchema__ query has proper values 1`] = `
 Object {
   "absPath": Any<String>,
   "children": Object {
+    "auth": ObjectContaining {
+      "kind": "dir",
+    },
+    "field": ObjectContaining {
+      "kind": "file",
+    },
     "index": Object {
       "absPath": Any<String>,
       "code": Any<Object>,
@@ -80,6 +89,9 @@ Object {
       },
       "kind": "dir",
       "name": "me",
+    },
+    "some.nested": ObjectContaining {
+      "kind": "file",
     },
     "some.type.index": Any<Object>,
     "user": Object {
