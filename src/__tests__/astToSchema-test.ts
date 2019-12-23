@@ -3,6 +3,7 @@ import { astToSchema, createFields } from '../astToSchema';
 import { SchemaComposer } from 'graphql-compose';
 import { printSchema } from 'graphql/utilities';
 import path from 'path';
+import dedent from 'dedent';
 
 describe('astToSchema()', () => {
   describe('Schema ./__testSchema__', () => {
@@ -29,8 +30,8 @@ describe('astToSchema()', () => {
       createFields(
         sc,
         getAstForFile(module, path.resolve(__dirname, './__testSchema__/query/field.ts')),
-        'Query',
-        sc.Query
+        sc.Query,
+        'Query'
       );
       expect(sc.Query.hasField('field')).toBeTruthy();
       expect(sc.Query.getFieldTypeName('field')).toBe('String');
@@ -40,8 +41,8 @@ describe('astToSchema()', () => {
       createFields(
         sc,
         getAstForFile(module, path.resolve(__dirname, './__testSchema__/query/some.nested.ts')),
-        'Query',
-        sc.Query
+        sc.Query,
+        'Query'
       );
       expect(sc.Query.hasField('some')).toBeTruthy();
       expect(sc.Query.getFieldTypeName('some')).toBe('QuerySome');
@@ -53,8 +54,8 @@ describe('astToSchema()', () => {
       createFields(
         sc,
         getAstForFile(module, path.resolve(__dirname, './__testSchema__/query/some.type.index.ts')),
-        'Query',
-        sc.Query
+        sc.Query,
+        'Query'
       );
       expect(sc.Query.hasField('some')).toBeTruthy();
       expect(sc.Query.getFieldTypeName('some')).toBe('QuerySome');
@@ -69,8 +70,8 @@ describe('astToSchema()', () => {
       createFields(
         sc,
         getAstForDir(module, path.resolve(__dirname, './__testSchema__/query/me')),
-        'Query',
-        sc.Query
+        sc.Query,
+        'Query'
       );
       expect(sc.Query.hasField('me')).toBeTruthy();
       expect(sc.Query.getFieldTypeName('me')).toBe('QueryMe');
@@ -105,5 +106,47 @@ describe('astToSchema()', () => {
     });
     const sc = astToSchema(ast);
     expect(sc.Query.getFieldOTC('auth').getFieldTypeName('nested')).toBe('QueryAuthNested');
+    expect(sc.Query.toSDL({ deep: true })).toBe(dedent`
+      type Query {
+        auth: QueryAuth
+      }
+
+      type QueryAuth {
+        nested: QueryAuthNested
+      }
+      
+      type QueryAuthNested {
+        method: Boolean
+      }
+      
+      """The \`Boolean\` scalar type represents \`true\` or \`false\`."""
+      scalar Boolean
+    `);
+  });
+
+  describe('astToSchema()', () => {
+    it('should properly add prefix for created TypeNames', () => {
+      const ast = directoryToAst(module, {
+        relativePath: './__testSchema__',
+        include: /query\.auth$|query\.auth\/nested/,
+      });
+      const sc = astToSchema(ast, { prefix: 'Corp', suffix: 'Old' });
+      expect(sc.Query.toSDL({ deep: true })).toBe(dedent`
+        type Query {
+          auth: CorpQueryAuthOld
+        }
+
+        type CorpQueryAuthOld {
+          nested: CorpQueryAuthNestedOld
+        }
+        
+        type CorpQueryAuthNestedOld {
+          method: Boolean
+        }
+
+        """The \`Boolean\` scalar type represents \`true\` or \`false\`."""
+        scalar Boolean
+      `);
+    });
   });
 });
