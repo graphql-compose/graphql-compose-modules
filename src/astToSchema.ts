@@ -4,7 +4,7 @@ import {
   upperFirst,
   ObjectTypeComposerFieldConfig,
   isOutputTypeDefinitionString,
-  isTypeNameString,
+  isWrappedTypeNameString,
   isComposeOutputType,
   isSomeOutputTypeDefinitionString,
   inspect,
@@ -161,7 +161,7 @@ function prepareNamespaceFieldConfig(
     fc.type = sc.createObjectTC(typename);
   } else {
     if (typeof fc.type === 'string') {
-      if (!isOutputTypeDefinitionString(fc.type) && !isTypeNameString(fc.type)) {
+      if (!isOutputTypeDefinitionString(fc.type) && !isWrappedTypeNameString(fc.type)) {
         throw new Error(dedent`
           You provide incorrect output type definition:
             ${fc.type}
@@ -225,7 +225,7 @@ function prepareFieldConfig(
 function isSomeOutputTypeDefinition(type: any): boolean {
   if (typeof type === 'string') {
     // type: 'String'
-    return isSomeOutputTypeDefinitionString(type) || isTypeNameString(type);
+    return isSomeOutputTypeDefinitionString(type) || isWrappedTypeNameString(type);
   } else if (Array.isArray(type)) {
     // type: ['String']
     return isSomeOutputTypeDefinition(type[0]);
