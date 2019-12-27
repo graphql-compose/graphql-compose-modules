@@ -188,9 +188,13 @@ function checkInclusion(
         filename
       ) ||
       // Hardcoded skip file extensions
-      new RegExp('(\\.d\\.ts)$', 'i').test(filename)
-    )
+      // typescript definition files
+      new RegExp('(\\.d\\.ts)$', 'i').test(filename) ||
+      // test files
+      new RegExp('(\\.spec\\.(ts|js))$', 'i').test(filename)
+    ) {
       return false;
+    }
   }
 
   if (options.include) {
