@@ -21,6 +21,7 @@ export interface AstRootTypeNode extends AstBaseNode {
   children: {
     [key: string]: AstDirNode | AstFileNode;
   };
+  namespaceConfig?: AstFileNode;
 }
 
 export interface AstDirNode extends AstBaseNode {
@@ -28,6 +29,7 @@ export interface AstDirNode extends AstBaseNode {
   children: {
     [key: string]: AstDirNode | AstFileNode;
   };
+  namespaceConfig?: AstFileNode;
 }
 
 export interface AstFileNode extends AstBaseNode {
@@ -92,6 +94,9 @@ export function directoryToAst(m: NodeModule, options: Options = defaultOptions)
             };
           } else {
             rootTypeAst.children = astDir.children;
+            if (astDir.namespaceConfig) {
+              rootTypeAst.namespaceConfig = astDir.namespaceConfig;
+            }
           }
           result[opType] = rootTypeAst;
         }
@@ -138,7 +143,9 @@ export function getAstForDir(
       // this node is a file
       const fileAst = getAstForFile(m, absFilePath, options);
       if (fileAst) {
-        if (result.children[fileAst.name]) {
+        if (fileAst.name === 'index') {
+          result.namespaceConfig = fileAst;
+        } else if (result.children[fileAst.name]) {
           throw new Error(
             `You have a folder and file with same name "${fileAst.name}" by the following path ${absPath}. Please remove one of them.`
           );
@@ -159,7 +166,7 @@ export function getAstForFile(
 ): AstFileNode | void {
   const filename = basename(absPath);
   if (absPath !== m.filename && checkInclusion(absPath, 'file', filename, options)) {
-    // hash node key shouldn't include file extension
+    // module name shouldn't include file extension
     const moduleName = filename.substring(0, filename.lastIndexOf('.'));
     return {
       kind: 'file',

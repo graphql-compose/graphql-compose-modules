@@ -22,26 +22,26 @@ describe('directoryToAst()', () => {
               'address.city': expect.objectContaining({ kind: 'file' }),
               'address.street': expect.objectContaining({ kind: 'file' }),
               name: expect.objectContaining({ kind: 'file' }),
-              index: {
-                kind: 'file',
-                name: 'index',
-                absPath: expect.any(String),
-                code: expect.any(Object),
-              },
+            },
+            namespaceConfig: {
+              kind: 'file',
+              name: 'index',
+              absPath: expect.any(String),
+              code: expect.any(Object),
             },
           },
-          index: { kind: 'file', absPath: expect.any(String), code: expect.any(Object) },
           'some.nested': expect.objectContaining({ kind: 'file' }),
-          'some.type.index': expect.any(Object),
+          'some.index': expect.any(Object),
           user: {
             absPath: expect.any(String),
             children: {
               extendedData: expect.any(Object),
-              index: expect.any(Object),
               roles: expect.any(Object),
             },
+            namespaceConfig: expect.any(Object),
           },
         },
+        namespaceConfig: expect.any(Object),
       });
     });
 
@@ -54,11 +54,11 @@ describe('directoryToAst()', () => {
           auth: {
             absPath: expect.any(String),
             children: {
-              index: expect.objectContaining({ kind: 'file' }),
               login: expect.objectContaining({ kind: 'file' }),
               logout: expect.objectContaining({ kind: 'file' }),
               nested: expect.objectContaining({ kind: 'dir' }),
             },
+            namespaceConfig: expect.objectContaining({ kind: 'file' }),
           },
           user: {
             absPath: expect.any(String),

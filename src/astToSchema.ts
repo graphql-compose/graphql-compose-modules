@@ -76,26 +76,17 @@ export function createFields(
   }
 
   if (ast.kind === 'file') {
-    if (name !== 'index') {
-      if (name.endsWith('.index')) {
-        const fieldName = name.slice(0, -6); // remove ".index" from field name
-        parent.addNestedFields({
-          [fieldName]: prepareNamespaceFieldConfig(sc, ast, getTypename(ast, pathPrefix, opts)),
-        });
-      } else {
-        parent.addNestedFields({
-          [name]: prepareFieldConfig(sc, ast),
-        });
-      }
-    }
+    parent.addNestedFields({
+      [name]: prepareFieldConfig(sc, ast),
+    });
     return;
   }
 
   if (ast.kind === 'dir') {
     const typename = getTypename(ast, pathPrefix, opts);
     let fc: ObjectTypeComposerFieldConfig<any, any>;
-    if (ast.children['index'] && ast.children['index'].kind === 'file') {
-      fc = prepareNamespaceFieldConfig(sc, ast.children['index'], typename);
+    if (ast.namespaceConfig) {
+      fc = prepareNamespaceFieldConfig(sc, ast.namespaceConfig, typename);
     } else {
       fc = { type: sc.createObjectTC(typename) };
     }

@@ -50,18 +50,18 @@ describe('astToSchema()', () => {
       expect(sc.Query.getFieldOTC('some').getFieldTypeName('nested')).toBe('Int');
     });
 
-    it('file: query/some.type.index.ts', () => {
+    it('file: query/some.index.ts should be as regular field', () => {
       createFields(
         sc,
-        getAstForFile(module, path.resolve(__dirname, './__testSchema__/query/some.type.index.ts')),
+        getAstForFile(module, path.resolve(__dirname, './__testSchema__/query/some.index.ts')),
         sc.Query,
         'Query'
       );
       expect(sc.Query.hasField('some')).toBeTruthy();
       expect(sc.Query.getFieldTypeName('some')).toBe('QuerySome');
-      expect(sc.Query.getFieldOTC('some').hasField('type')).toBeTruthy();
-      expect(sc.Query.getFieldOTC('some').getFieldTypeName('type')).toBe('SomeIndexFileType');
-      expect((sc.Query.getFieldOTC('some').getFieldConfig('type') as any).resolve()).toEqual({
+      expect(sc.Query.getFieldOTC('some').hasField('index')).toBeTruthy();
+      expect(sc.Query.getFieldOTC('some').getFieldTypeName('index')).toBe('SomeIndexFileType');
+      expect((sc.Query.getFieldOTC('some').getFieldConfig('index') as any).resolve()).toEqual({
         awesomeValue: 'awesomeValue',
       });
     });

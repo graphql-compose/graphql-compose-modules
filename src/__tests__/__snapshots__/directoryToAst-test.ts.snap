@@ -7,9 +7,6 @@ Object {
     "auth": Object {
       "absPath": Any<String>,
       "children": Object {
-        "index": ObjectContaining {
-          "kind": "file",
-        },
         "login": ObjectContaining {
           "kind": "file",
         },
@@ -22,6 +19,9 @@ Object {
       },
       "kind": "dir",
       "name": "auth",
+      "namespaceConfig": ObjectContaining {
+        "kind": "file",
+      },
     },
     "logs.nested": Object {
       "absPath": Any<String>,
@@ -62,12 +62,6 @@ Object {
     "field": ObjectContaining {
       "kind": "file",
     },
-    "index": Object {
-      "absPath": Any<String>,
-      "code": Any<Object>,
-      "kind": "file",
-      "name": "index",
-    },
     "me": Object {
       "absPath": Any<String>,
       "children": Object {
@@ -77,35 +71,36 @@ Object {
         "address.street": ObjectContaining {
           "kind": "file",
         },
-        "index": Object {
-          "absPath": Any<String>,
-          "code": Any<Object>,
-          "kind": "file",
-          "name": "index",
-        },
         "name": ObjectContaining {
           "kind": "file",
         },
       },
       "kind": "dir",
       "name": "me",
+      "namespaceConfig": Object {
+        "absPath": Any<String>,
+        "code": Any<Object>,
+        "kind": "file",
+        "name": "index",
+      },
     },
+    "some.index": Any<Object>,
     "some.nested": ObjectContaining {
       "kind": "file",
     },
-    "some.type.index": Any<Object>,
     "user": Object {
       "absPath": Any<String>,
       "children": Object {
         "extendedData": Any<Object>,
-        "index": Any<Object>,
         "roles": Any<Object>,
       },
       "kind": "dir",
       "name": "user",
+      "namespaceConfig": Any<Object>,
     },
   },
   "kind": "rootType",
   "name": "query",
+  "namespaceConfig": Any<Object>,
 }
 `;
