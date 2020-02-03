@@ -8,7 +8,7 @@ export interface DirectoryToAstOptions {
   exclude?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
 }
 
-export type AstNodeKinds = 'rootType' | 'dir' | 'file';
+export type AstNodeKinds = 'rootType' | 'dir' | 'file' | 'root';
 
 export interface AstBaseNode {
   kind: AstNodeKinds;
@@ -39,10 +39,13 @@ export interface AstFileNode extends AstBaseNode {
   };
 }
 
-export interface AstResult {
-  query?: AstRootTypeNode;
-  mutation?: AstRootTypeNode;
-  subscription?: AstRootTypeNode;
+type RootTypeNames = 'query' | 'mutation' | 'subscription';
+
+export interface AstRootNode extends AstBaseNode {
+  kind: 'root';
+  children: {
+    [T in RootTypeNames]?: AstRootTypeNode;
+  };
 }
 
 export const defaultOptions: DirectoryToAstOptions = {
@@ -52,7 +55,7 @@ export const defaultOptions: DirectoryToAstOptions = {
 export function directoryToAst(
   m: NodeModule,
   options: DirectoryToAstOptions = defaultOptions
-): AstResult {
+): AstRootNode {
   // if no path was passed in, assume the equivelant of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
   const schemaPath = options?.relativePath
@@ -66,7 +69,12 @@ export function directoryToAst(
     }
   });
 
-  const result = {} as AstResult;
+  const result = {
+    kind: 'root',
+    name: basename(schemaPath),
+    absPath: schemaPath,
+    children: {},
+  } as AstRootNode;
 
   fs.readdirSync(schemaPath).forEach((filename) => {
     const absPath = join(schemaPath, filename);
@@ -76,8 +84,8 @@ export function directoryToAst(
       const re = /^(query|mutation|subscription)(\.(.*))?$/i;
       const found = dirName.match(re);
       if (found) {
-        const opType = found[1].toLowerCase() as keyof AstResult;
-        let rootTypeAst = result[opType];
+        const opType = found[1].toLowerCase() as keyof AstRootNode['children'];
+        let rootTypeAst = result.children[opType];
         if (!rootTypeAst)
           rootTypeAst = {
             kind: 'rootType',
@@ -101,7 +109,7 @@ export function directoryToAst(
               rootTypeAst.namespaceConfig = astDir.namespaceConfig;
             }
           }
-          result[opType] = rootTypeAst;
+          result.children[opType] = rootTypeAst;
         }
       }
     }

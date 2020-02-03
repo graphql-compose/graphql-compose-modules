@@ -9,7 +9,7 @@ import {
   isSomeOutputTypeDefinitionString,
   inspect,
 } from 'graphql-compose';
-import { AstResult, AstRootTypeNode, AstDirNode, AstFileNode } from './directoryToAst';
+import { AstRootNode, AstRootTypeNode, AstDirNode, AstFileNode } from './directoryToAst';
 import dedent from 'dedent';
 import { GraphQLObjectType } from 'graphql';
 
@@ -20,7 +20,7 @@ export interface AstToSchemaOptions {
 }
 
 export function astToSchema<TContext = any>(
-  ast: AstResult,
+  ast: AstRootNode,
   opts: AstToSchemaOptions = {}
 ): SchemaComposer<TContext> {
   let sc: SchemaComposer<any>;
@@ -38,9 +38,9 @@ export function astToSchema<TContext = any>(
     sc = new SchemaComposer();
   }
 
-  if (ast.query) populateRoot(sc, 'Query', ast.query, opts);
-  if (ast.mutation) populateRoot(sc, 'Mutation', ast.mutation, opts);
-  if (ast.subscription) populateRoot(sc, 'Subscription', ast.subscription, opts);
+  if (ast.children.query) populateRoot(sc, 'Query', ast.children.query, opts);
+  if (ast.children.mutation) populateRoot(sc, 'Mutation', ast.children.mutation, opts);
+  if (ast.children.subscription) populateRoot(sc, 'Subscription', ast.children.subscription, opts);
 
   return sc;
 }

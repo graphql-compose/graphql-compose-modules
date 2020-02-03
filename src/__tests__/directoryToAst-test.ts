@@ -5,11 +5,11 @@ describe('directoryToAst()', () => {
     const ast = directoryToAst(module, { relativePath: './__testSchema__' });
 
     it('should return root types', () => {
-      expect(Object.keys(ast)).toEqual(expect.arrayContaining(['query', 'mutation']));
+      expect(Object.keys(ast.children)).toEqual(expect.arrayContaining(['query', 'mutation']));
     });
 
     it('query has proper values', () => {
-      expect(ast.query).toMatchSnapshot({
+      expect(ast.children.query).toMatchSnapshot({
         name: 'query',
         kind: 'rootType',
         absPath: expect.any(String),
@@ -46,7 +46,7 @@ describe('directoryToAst()', () => {
     });
 
     it('mutation has proper values', () => {
-      expect(ast.mutation).toMatchSnapshot({
+      expect(ast.children.mutation).toMatchSnapshot({
         name: 'mutation',
         kind: 'rootType',
         absPath: expect.any(String),

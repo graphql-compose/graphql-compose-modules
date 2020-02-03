@@ -14,7 +14,8 @@ type Mutation {
 }
 
 type MutationAuth {
-  login: Boolean
+  # Login operation
+  login(email: String, password: String): Boolean
   logout: Boolean
   nested: MutationAuthNested
 }

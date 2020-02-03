@@ -21,7 +21,7 @@ export {
   AstRootTypeNode,
   AstDirNode,
   AstFileNode,
-  AstResult,
+  AstRootNode,
 } from './directoryToAst';
 export { astToSchema, AstToSchemaOptions } from './astToSchema';
 export * from './testHelpers';
