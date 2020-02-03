@@ -68,7 +68,7 @@ export function visitNode(
   }
 
   if (result.kind === 'dir' || result.kind === 'rootType') {
-    forEachKey(result.children, (childNode, name) => {
+    forEachKey(result.children, (childNode: AstDirNode | AstFileNode, name) => {
       visitNode(childNode, visitor, {
         parent: result as AstDirNode,
         name,
