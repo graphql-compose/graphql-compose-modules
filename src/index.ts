@@ -25,3 +25,11 @@ export {
 } from './directoryToAst';
 export { astToSchema, AstToSchemaOptions } from './astToSchema';
 export * from './testHelpers';
+
+export {
+  astVisitor,
+  VISITOR_REMOVE_NODE,
+  VISITOR_SKIP_CHILDREN,
+  AstVisitor,
+  VisitInfo,
+} from './astVisitor';
