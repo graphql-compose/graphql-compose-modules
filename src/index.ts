@@ -1,7 +1,7 @@
-import { directoryToAst, Options } from './directoryToAst';
-import { astToSchema, AstOptions } from './astToSchema';
+import { directoryToAst, DirectoryToAstOptions } from './directoryToAst';
+import { astToSchema, AstToSchemaOptions } from './astToSchema';
 
-export interface BuildOptions extends Options, AstOptions {}
+export interface BuildOptions extends DirectoryToAstOptions, AstToSchemaOptions {}
 
 export function buildSchema(module: NodeModule, opts: BuildOptions = {}) {
   return loadSchemaComposer(module, opts).buildSchema();
@@ -13,5 +13,15 @@ export function loadSchemaComposer(module: NodeModule, opts: BuildOptions) {
   return sc;
 }
 
-export { directoryToAst, astToSchema };
+export {
+  directoryToAst,
+  DirectoryToAstOptions,
+  AstNodeKinds,
+  AstBaseNode,
+  AstRootTypeNode,
+  AstDirNode,
+  AstFileNode,
+  AstResult,
+} from './directoryToAst';
+export { astToSchema, AstToSchemaOptions } from './astToSchema';
 export * from './testHelpers';

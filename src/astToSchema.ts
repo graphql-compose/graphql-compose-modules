@@ -13,7 +13,7 @@ import { AstResult, AstRootTypeNode, AstDirNode, AstFileNode } from './directory
 import dedent from 'dedent';
 import { GraphQLObjectType } from 'graphql';
 
-export interface AstOptions {
+export interface AstToSchemaOptions {
   schemaComposer?: SchemaComposer<any>;
   prefix?: string;
   suffix?: string;
@@ -21,7 +21,7 @@ export interface AstOptions {
 
 export function astToSchema<TContext = any>(
   ast: AstResult,
-  opts: AstOptions = {}
+  opts: AstToSchemaOptions = {}
 ): SchemaComposer<TContext> {
   let sc: SchemaComposer<any>;
 
@@ -49,7 +49,7 @@ function populateRoot(
   sc: SchemaComposer<any>,
   rootName: 'Query' | 'Mutation' | 'Subscription',
   astRootNode: AstRootTypeNode,
-  opts?: AstOptions
+  opts?: AstToSchemaOptions
 ) {
   const tc = sc[rootName];
   Object.keys(astRootNode.children).forEach((key) => {
@@ -62,7 +62,7 @@ export function createFields(
   ast: AstDirNode | AstFileNode | void,
   parent: ObjectTypeComposer,
   pathPrefix: string,
-  opts: AstOptions = {}
+  opts: AstToSchemaOptions = {}
 ): void {
   if (!ast) return;
 
@@ -105,7 +105,11 @@ export function createFields(
   }
 }
 
-function getTypename(ast: AstDirNode | AstFileNode, pathPrefix: string, opts: AstOptions): string {
+function getTypename(
+  ast: AstDirNode | AstFileNode,
+  pathPrefix: string,
+  opts: AstToSchemaOptions
+): string {
   const name = ast.name;
 
   let typename = pathPrefix;

@@ -1,16 +1,16 @@
 import fs from 'fs';
 import { join, resolve, dirname, basename } from 'path';
 
-export interface Options {
+export interface DirectoryToAstOptions {
   relativePath?: string;
   extensions?: string[];
   include?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
   exclude?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
 }
 
-type AstNodeKinds = 'rootType' | 'dir' | 'file';
+export type AstNodeKinds = 'rootType' | 'dir' | 'file';
 
-interface AstBaseNode {
+export interface AstBaseNode {
   kind: AstNodeKinds;
   name: string;
   absPath: string;
@@ -45,11 +45,14 @@ export interface AstResult {
   subscription?: AstRootTypeNode;
 }
 
-export const defaultOptions: Options = {
+export const defaultOptions: DirectoryToAstOptions = {
   extensions: ['js', 'ts'],
 };
 
-export function directoryToAst(m: NodeModule, options: Options = defaultOptions): AstResult {
+export function directoryToAst(
+  m: NodeModule,
+  options: DirectoryToAstOptions = defaultOptions
+): AstResult {
   // if no path was passed in, assume the equivelant of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
   const schemaPath = options?.relativePath
@@ -110,7 +113,7 @@ export function directoryToAst(m: NodeModule, options: Options = defaultOptions)
 export function getAstForDir(
   m: NodeModule,
   absPath: string,
-  options: Options = defaultOptions
+  options: DirectoryToAstOptions = defaultOptions
 ): AstDirNode | void {
   const name = basename(absPath);
 
@@ -162,7 +165,7 @@ export function getAstForDir(
 export function getAstForFile(
   m: NodeModule,
   absPath: string,
-  options: Options = defaultOptions
+  options: DirectoryToAstOptions = defaultOptions
 ): AstFileNode | void {
   const filename = basename(absPath);
   if (absPath !== m.filename && checkInclusion(absPath, 'file', filename, options)) {
@@ -181,7 +184,7 @@ function checkInclusion(
   absPath: string,
   kind: 'dir' | 'file',
   filename: string,
-  options: Options
+  options: DirectoryToAstOptions
 ): boolean {
   // Skip dir/files started from double underscore
   if (/^__.*/i.test(filename)) {
