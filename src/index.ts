@@ -14,3 +14,4 @@ export function loadSchemaComposer(module: NodeModule, opts: BuildOptions) {
 }
 
 export { directoryToAst, astToSchema };
+export * from './testHelpers';
