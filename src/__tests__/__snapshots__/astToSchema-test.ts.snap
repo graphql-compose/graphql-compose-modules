@@ -1,13 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`astToSchema() Schema ./__testSchema__ schema 1`] = `
-"# Provides default value for input field.
-directive @default(value: JSON!) on INPUT_FIELD_DEFINITION
-
-# The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-scalar JSON
-
-type Mutation {
+"type Mutation {
   logs: MutationLogs
   auth: MutationAuth
   user: MutationUser
