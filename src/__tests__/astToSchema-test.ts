@@ -85,17 +85,13 @@ describe('astToSchema()', () => {
       // check that fields from sibling files was added
       expect(sc.Query.getFieldOTC('me').getFieldTypeName('name')).toBe('String');
       expect((sc.Query.getFieldOTC('me').getFieldConfig('name') as any).resolve()).toBe('nodkz');
-      expect(
-        sc.Query.getFieldOTC('me')
-          .getFieldOTC('address')
-          .getTypeName()
-      ).toBe('QueryMeAddress');
-      expect(
-        sc.Query.getFieldOTC('me')
-          .getFieldOTC('address')
-          .getFieldNames()
-          .sort()
-      ).toEqual(['city', 'street']);
+      expect(sc.Query.getFieldOTC('me').getFieldOTC('address').getTypeName()).toBe(
+        'QueryMeAddress'
+      );
+      expect(sc.Query.getFieldOTC('me').getFieldOTC('address').getFieldNames().sort()).toEqual([
+        'city',
+        'street',
+      ]);
     });
   });
 

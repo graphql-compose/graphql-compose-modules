@@ -1,34 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`astToSchema() Schema ./__testSchema__ schema 1`] = `
-"type Mutation {
-  logs: MutationLogs
-  auth: MutationAuth
-  user: MutationUser
-}
-
-type MutationAuth {
-  # Login operation
-  login(email: String, password: String): Boolean
-  logout: Boolean
-  nested: MutationAuthNested
-}
-
-type MutationAuthNested {
-  method: Boolean
-}
-
-type MutationLogs {
-  nested: MutationLogsNested
-}
-
-type MutationLogsNested {
-  list: Boolean
-}
-
-type MutationUser {
-  create: Boolean
-  update: Boolean
+"\\"\\"\\"\\"\\"\\"
+schema {
+  query: Query
+  mutation: Mutation
 }
 
 type Query {
@@ -37,15 +13,6 @@ type Query {
   some: QuerySome
   user: UserAwesomeType
   auth: QueryAuth
-}
-
-type QueryAuth {
-  isLoggedIn: Boolean
-  nested: QueryAuthNested
-}
-
-type QueryAuthNested {
-  method: Boolean
 }
 
 type QueryMe {
@@ -76,6 +43,45 @@ type UserAwesomeType {
 
 type UserExtendedData {
   starsCount: Int
+}
+
+type QueryAuth {
+  isLoggedIn: Boolean
+  nested: QueryAuthNested
+}
+
+type QueryAuthNested {
+  method: Boolean
+}
+
+type Mutation {
+  logs: MutationLogs
+  auth: MutationAuth
+  user: MutationUser
+}
+
+type MutationLogs {
+  nested: MutationLogsNested
+}
+
+type MutationLogsNested {
+  list: Boolean
+}
+
+type MutationAuth {
+  # Login operation
+  login(email: String, password: String): Boolean
+  logout: Boolean
+  nested: MutationAuthNested
+}
+
+type MutationAuthNested {
+  method: Boolean
+}
+
+type MutationUser {
+  create: Boolean
+  update: Boolean
 }
 "
 `;

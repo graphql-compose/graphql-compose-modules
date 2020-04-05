@@ -82,7 +82,7 @@ function _getArgsForQuery(
   };
 }
 
-export async function testOperation(opts: RunQueryOpts): Promise<ExecutionResult<any>> {
+export async function testOperation(opts: RunQueryOpts): Promise<ExecutionResult> {
   const schema = testBuildSchema(opts.fc, opts.schemaComposer);
 
   const res = await graphql({
