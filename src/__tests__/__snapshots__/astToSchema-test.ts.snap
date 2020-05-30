@@ -12,7 +12,7 @@ type Query {
   me(arg: Int): QueryMe
   some: QuerySome
   user: UserAwesomeType
-  auth: QueryAuth
+  auth: NamespaceCustomTypeName
 }
 
 type QueryMe {
@@ -45,7 +45,7 @@ type UserExtendedData {
   starsCount: Int
 }
 
-type QueryAuth {
+type NamespaceCustomTypeName {
   isLoggedIn: Boolean
   nested: QueryAuthNested
 }

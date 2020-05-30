@@ -14,7 +14,15 @@ describe('directoryToAst()', () => {
         kind: 'rootType',
         absPath: expect.any(String),
         children: {
-          auth: expect.objectContaining({ kind: 'dir' }),
+          auth: {
+            kind: 'dir',
+            name: 'auth',
+            absPath: expect.any(String),
+            children: {
+              isLoggedIn: expect.objectContaining({ kind: 'file' }),
+              nested: expect.objectContaining({ kind: 'dir' }),
+            },
+          },
           field: expect.objectContaining({ kind: 'file' }),
           me: {
             absPath: expect.any(String),

@@ -56,8 +56,28 @@ exports[`directoryToAst() Schema ./__testSchema__ query has proper values 1`] = 
 Object {
   "absPath": Any<String>,
   "children": Object {
-    "auth": ObjectContaining {
+    "auth": Object {
+      "absPath": Any<String>,
+      "children": Object {
+        "isLoggedIn": ObjectContaining {
+          "kind": "file",
+        },
+        "nested": ObjectContaining {
+          "kind": "dir",
+        },
+      },
       "kind": "dir",
+      "name": "auth",
+      "namespaceConfig": Object {
+        "absPath": "/Users/nodkz/www/_npm/graphql-compose-modules/src/__tests__/__testSchema__/query.auth/index.ts",
+        "code": Object {
+          "default": Object {
+            "type": "NamespaceCustomTypeName",
+          },
+        },
+        "kind": "file",
+        "name": "index",
+      },
     },
     "field": ObjectContaining {
       "kind": "file",
