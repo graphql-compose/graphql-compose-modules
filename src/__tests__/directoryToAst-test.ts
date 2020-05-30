@@ -22,6 +22,7 @@ describe('directoryToAst()', () => {
               isLoggedIn: expect.objectContaining({ kind: 'file' }),
               nested: expect.objectContaining({ kind: 'dir' }),
             },
+            namespaceConfig: expect.objectContaining({ kind: 'file' }),
           },
           field: expect.objectContaining({ kind: 'file' }),
           me: {

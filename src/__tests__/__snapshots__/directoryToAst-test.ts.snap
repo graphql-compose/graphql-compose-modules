@@ -68,15 +68,8 @@ Object {
       },
       "kind": "dir",
       "name": "auth",
-      "namespaceConfig": Object {
-        "absPath": "/Users/nodkz/www/_npm/graphql-compose-modules/src/__tests__/__testSchema__/query.auth/index.ts",
-        "code": Object {
-          "default": Object {
-            "type": "NamespaceCustomTypeName",
-          },
-        },
+      "namespaceConfig": ObjectContaining {
         "kind": "file",
-        "name": "index",
       },
     },
     "field": ObjectContaining {
