@@ -199,6 +199,11 @@ function checkInclusion(
     return false;
   }
 
+  // Skip dir/files started from dot
+  if (/^\..*/i.test(filename)) {
+    return false;
+  }
+
   if (kind === 'file') {
     if (
       // Verify file has valid extension
