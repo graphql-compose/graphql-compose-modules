@@ -33,3 +33,5 @@ export {
   AstVisitor,
   VisitInfo,
 } from './astVisitor';
+
+export { astMerge } from './astMerge';

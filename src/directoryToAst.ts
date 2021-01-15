@@ -18,17 +18,17 @@ export interface AstBaseNode {
 
 export interface AstRootTypeNode extends AstBaseNode {
   kind: 'rootType';
-  children: {
-    [key: string]: AstDirNode | AstFileNode;
-  };
+  children: AstDirChildren;
   namespaceConfig?: AstFileNode;
 }
 
+export type AstDirChildren = {
+  [key: string]: AstDirNode | AstFileNode;
+};
+
 export interface AstDirNode extends AstBaseNode {
   kind: 'dir';
-  children: {
-    [key: string]: AstDirNode | AstFileNode;
-  };
+  children: AstDirChildren;
   namespaceConfig?: AstFileNode;
 }
 
@@ -39,7 +39,7 @@ export interface AstFileNode extends AstBaseNode {
   };
 }
 
-type RootTypeNames = 'query' | 'mutation' | 'subscription';
+export type RootTypeNames = 'query' | 'mutation' | 'subscription';
 
 export interface AstRootNode extends AstBaseNode {
   kind: 'root';
