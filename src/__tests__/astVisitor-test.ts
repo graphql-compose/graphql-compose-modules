@@ -2,6 +2,7 @@ import { astVisitor, VISITOR_REMOVE_NODE, VISITOR_SKIP_CHILDREN } from '../astVi
 import { directoryToAst, AstRootNode } from '../directoryToAst';
 import { astToSchema } from '../astToSchema';
 import { graphql } from 'graphql';
+import sortBy from 'lodash.sortby';
 
 describe('astVisitor', () => {
   let ast: AstRootNode;
@@ -111,6 +112,59 @@ describe('astVisitor', () => {
     expect(ast.children).toEqual({
       mutation: { absPath: '', children: {}, kind: 'rootType', name: 'MOCK' },
       query: { absPath: '', children: {}, kind: 'rootType', name: 'MOCK' },
+    });
+  });
+
+  describe('visitFn should have path & operation & name properties', () => {
+    it('check ROOT_TYPE', () => {
+      const nodes = [] as Array<any>;
+      astVisitor(ast, {
+        ROOT_TYPE: (node, info) => {
+          nodes.push({ operation: info.operation, name: info.name, path: info.path });
+        },
+      });
+      expect(sortBy(nodes, ['operation', 'name'])).toEqual([
+        { name: 'mutation', operation: 'mutation', path: [] },
+        { name: 'query', operation: 'query', path: [] },
+      ]);
+    });
+
+    it('check DIR & FILE elements', () => {
+      const nodes = [] as Array<any>;
+      astVisitor(ast, {
+        DIR: (node, info) => {
+          nodes.push({ operation: info.operation, name: info.name, path: info.path });
+        },
+        FILE: (node, info) => {
+          nodes.push({ operation: info.operation, name: info.name, path: info.path });
+        },
+      });
+      expect(sortBy(nodes, ['operation', 'name'])).toEqual([
+        { operation: 'mutation', name: 'auth', path: ['mutation'] },
+        { operation: 'mutation', name: 'create', path: ['mutation', 'user'] },
+        { operation: 'mutation', name: 'list', path: ['mutation', 'logs.nested'] },
+        { operation: 'mutation', name: 'login', path: ['mutation', 'auth'] },
+        { operation: 'mutation', name: 'logout', path: ['mutation', 'auth'] },
+        { operation: 'mutation', name: 'logs.nested', path: ['mutation'] },
+        { operation: 'mutation', name: 'method', path: ['mutation', 'auth', 'nested'] },
+        { operation: 'mutation', name: 'nested', path: ['mutation', 'auth'] },
+        { operation: 'mutation', name: 'update', path: ['mutation', 'user'] },
+        { operation: 'mutation', name: 'user', path: ['mutation'] },
+        { operation: 'query', name: 'address.city', path: ['query', 'me'] },
+        { operation: 'query', name: 'address.street', path: ['query', 'me'] },
+        { operation: 'query', name: 'auth', path: ['query'] },
+        { operation: 'query', name: 'extendedData', path: ['query', 'user'] },
+        { operation: 'query', name: 'field', path: ['query'] },
+        { operation: 'query', name: 'isLoggedIn', path: ['query', 'auth'] },
+        { operation: 'query', name: 'me', path: ['query'] },
+        { operation: 'query', name: 'method', path: ['query', 'auth', 'nested'] },
+        { operation: 'query', name: 'name', path: ['query', 'me'] },
+        { operation: 'query', name: 'nested', path: ['query', 'auth'] },
+        { operation: 'query', name: 'roles', path: ['query', 'user'] },
+        { operation: 'query', name: 'some.index', path: ['query'] },
+        { operation: 'query', name: 'some.nested', path: ['query'] },
+        { operation: 'query', name: 'user', path: ['query'] },
+      ]);
     });
   });
 

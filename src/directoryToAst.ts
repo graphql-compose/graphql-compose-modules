@@ -43,9 +43,7 @@ export type RootTypeNames = 'query' | 'mutation' | 'subscription';
 
 export interface AstRootNode extends AstBaseNode {
   kind: 'root';
-  children: {
-    [T in RootTypeNames]?: AstRootTypeNode;
-  };
+  children: Record<RootTypeNames, AstRootTypeNode>;
 }
 
 export const defaultOptions: DirectoryToAstOptions = {
@@ -56,7 +54,7 @@ export function directoryToAst(
   m: NodeModule,
   options: DirectoryToAstOptions = defaultOptions
 ): AstRootNode {
-  // if no path was passed in, assume the equivelant of __dirname from caller
+  // if no path was passed in, assume the equivalent of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
   const schemaPath = options?.relativePath
     ? resolve(dirname(m.filename), options.relativePath)

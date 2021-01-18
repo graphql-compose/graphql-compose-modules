@@ -1,4 +1,10 @@
-import { AstRootTypeNode, AstDirNode, AstFileNode, AstRootNode } from './directoryToAst';
+import {
+  AstRootTypeNode,
+  AstDirNode,
+  AstFileNode,
+  AstRootNode,
+  RootTypeNames,
+} from './directoryToAst';
 
 /**
  * Do not traverse children
@@ -27,14 +33,23 @@ export type AstVisitor = {
 };
 
 export interface VisitInfo {
+  operation: RootTypeNames;
   parent: AstDirNode | AstRootTypeNode | AstRootNode;
   name: string;
   path: string[];
 }
 
 export function astVisitor(ast: AstRootNode, visitor: AstVisitor): void {
-  forEachKey(ast.children, (childNode, name) => {
-    if (childNode) visitNode(childNode, visitor, { parent: ast, name, path: [] });
+  (Object.keys(ast.children) as Array<keyof typeof ast.children>).forEach((operation) => {
+    const rootNode = ast.children[operation];
+    if (!rootNode) return;
+
+    visitNode(rootNode, visitor, {
+      parent: ast,
+      name: operation,
+      path: [],
+      operation,
+    });
   });
 }
 
@@ -73,6 +88,7 @@ export function visitNode(
         parent: result as AstDirNode,
         name,
         path: [...info.path, info.name],
+        operation: info.operation,
       });
     });
   }
