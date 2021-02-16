@@ -125,21 +125,120 @@ type MutationArticles {
 
 You may use sub-folders for `Query` & `Mutation` and all servers supports this feature. But for `Subscription` most current server implementations (eg. [apollo-server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)) does not support this yet.
 
-## API
+## GraphQLSchema construction
 
-![overview](./docs/diagrams/ast-transformation.drawio.svg)
+In `schema` folder create a file `index.ts` with the following content which traverses `query`, `mutation`, `subscription` folders and create `GraphQLSchema` instance for you:
+
+```ts
+import { buildSchema } from 'graphql-compose-modules';
+
+export const schema = buildSchema(module);
+```
+
+After that you may create a GraphQL server:
+
+```ts
+import { ApolloServer } from 'apollo-server';
+import { schema } from './schema';
+
+const server = new ApolloServer({ schema });
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});
+```
+
+## Advanced GraphQLSchema construction
+
+If you want transform AST of entrypoints (e.g. for adding authorization, logging, tracing) and for merging with another schemas distributed via npm packages – you may use the following advanced way:
+
+```ts
+import { directoryToAst, astToSchema, astMerge } from 'graphql-compose-modules';
+import { addQueryToMutations } from './transformers/addQueryToMutations';
+import { remoteServiceAST } from '@internal/some-service';
+
+// traverse `query`, `mutation`, `subscription` folders placed near this module
+let ast = directoryToAst(module);
+
+// apply transformer which uses astVisitor() method under the hood
+addQueryToMutations(ast);
+
+// merge with other ASTs distributed via npm packages
+ast = astMerge(ast, remoteServiceAST);
+
+// construct SchemaComposer
+const sc = astToSchema(ast);
+
+// construct GraphQLSchema instance and export it
+export const schema = sc.buildSchema();
+```
+
+## Writing own transformer for entrypoints
+
+For writing your own transformers you need to use `astVisitor()` method. As an example let's implement `addQueryToMutations` transformer which adds `query: Query` field to all your mutations:
+
+```ts
+import { astVisitor, VISITOR_SKIP_CHILDREN, AstRootNode } from 'graphql-compose-modules';
+import { ObjectTypeComposer, SchemaComposer } from 'graphql-compose';
+
+export function addQueryToMutations(
+  ast: AstRootNode,
+  schemaComposer: SchemaComposer<any>
+): void {
+  astVisitor(ast, {
+    // skip `query` & `subscriptions` root types
+    ROOT_TYPE: (node) => {
+      if (node.name !== 'mutation') {
+        return VISITOR_SKIP_CHILDREN;
+      }
+      return;
+    },
+    // for every file in `mutation` folder try to add `query` field if it does not exists
+    FILE: (node, nodeInfo) => {
+      const fieldConfig = node.code.default || {};
+      const next = fieldConfig.resolve;
+      if (!next) return;
+
+      const outputType = fieldConfig.type;
+      if (!outputType) return;
+      const outputTC = schemaComposer.typeMapper.convertOutputTypeDefinition(
+        outputType,
+        nodeInfo.name,
+        nodeInfo?.parent?.name
+      );
+      if (!(outputTC instanceof ObjectTypeComposer)) return;
+      if (outputTC.hasField('query')) return;
+      outputTC.setField('query', {
+        description: 'Sub-query which have to be executed after mutation.',
+        type: schemaComposer.Query,
+      });
+
+      fieldConfig.resolve = async (s: any, args: any, context: any, i: any) => {
+        const result = await next(s, args, context, i);
+        return {
+          query: {},
+          ...result,
+        };
+      };
+    },
+  });
+}
+```
+
+## API
 
 For now I provide basic overview of available API methods and I will describe them later.
 
 ### Main API method:
 
-- `buildSchema(module: NodeModule, opts: BuildOptions): GraphQLSchema` – use this method for creating graphql schema
+- `buildSchema(module: NodeModule, opts: BuildOptions): GraphQLSchema` – use this method for creating graphql schema from folder
 
 ### Advanced API methods:
 
 The following methods helps to use schema composition, applying middlewares and schema transformation via visitor pattern:
 
-- `loadSchemaComposer(module: NodeModule, options: BuildOptions): SchemaComposer` – construct SchemaComposer from folder (uses `directoryToAst` & `astToSchema` methods under the hood)
+![overview](./docs/diagrams/ast-transformation.drawio.svg)
+
 - `directoryToAst(module: NodeModule, options: DirectoryToAstOptions): AstRootNode` – traverses directories and construct AST for your graphql entrypoints
 - `astToSchema(ast: AstRootNode, opts: AstToSchemaOptions): SchemaComposer` – converts AST to GraphQL Schema
 - `astMerge(...asts: Array<AstRootNode>): AstRootNode` – combines several ASTs to one AST (helps compose several graphql schemas)
