@@ -57,9 +57,9 @@ type Subscription {
 
 If you want rename field `articlesList` to `articleList` in your schema just rename `articlesList.ts` file. If you want to add a new field to Schema – just add a new file to `Query`, `Mutation`, `Subscription` folders. **This simple approach helps you understand entrypoints of your schema without launching the GraphQL server – what you see in folders that you get in GraphQL Schema**.
 
-## Describing FieldConfigs in files
+## Describing Entrypoints in files
 
-Every FieldConfig definition is described in separate file. This file contains all information about input args, output type, resolve function and additional fields like description & deprecationReason. As an example let's create `schema/Query/sum.ts` and put inside the following content:
+Every Entrypoint (FieldConfig definition) is described in separate file. This file contains all information about input args, output type, resolve function and additional fields like description & deprecationReason. As an example let's create `schema/Query/sum.ts` and put inside the following content:
 
 ```ts
 export default {
@@ -73,12 +73,15 @@ export default {
   },
   description: 'This method sums two numbers',
   deprecationReason: 'This method is deprecated and will be removed soon.',
+  extensions: {
+    someExtraParam: 'Can be used for AST transformers',
+  },
 };
 ```
 
 If you familiar with [graphql-js FieldConfig definition](https://graphql.org/graphql-js/type/#examples) then you may notice that `type` & `args` properties are defined in SDL format. This syntax sugar provided by [graphql-compose](https://github.com/graphql-compose/graphql-compose#examples) package.
 
-## Namespaces for big schemas
+## Entrypoints with namespaces for big schemas
 
 If your GraphQL Schema has a lot of methods you may create sub-folders for grouping some entrypoints fields according to some Entity or Namespace:
 
