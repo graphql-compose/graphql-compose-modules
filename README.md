@@ -19,6 +19,8 @@ You may find a simple GraphQL server example in the following folder: [examples/
 
 When you are using code-first approach in GraphQL Schema construction you may meet with problem when you cannot understand what entrypoints has your schema. And where exactly placed the code which serves this or that entrypoint.
 
+![overview](./docs/diagrams/overview.drawio.svg)
+
 `graphql-compose-modules` uses a file-system based schema entrypoint definition (something like does NextJS with its pages concept for routing). You just create folder `schema/` and put inside it the following sub-folders (root directories): `query`, `mutation` and `subscription`. Inside these folders you may put `.js` or `.ts` files with FieldConfigs. Assume you create the following directory structure:
 
 ```bash
@@ -121,6 +123,8 @@ type MutationArticles {
 You may use sub-folders for `Query` & `Mutation` and all servers supports this feature. But for `Subscription` most current server implementations (eg. [apollo-server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)) does not support this yet.
 
 ## API
+
+![overview](./docs/diagrams/ast-transformation.drawio.svg)
 
 For now I provide basic overview of available API methods and I will describe them later.
 
