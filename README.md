@@ -17,11 +17,11 @@ You may find a simple GraphQL server example in the following folder: [examples/
 
 ## GraphQL schema entrypoints from a file structure
 
-When you are using code-first approach in GraphQL Schema construction you may meet with problem when you cannot understand what entrypoints has your schema. And where exactly placed the code which serves this or that entrypoint.
+When you are using code-first approach in GraphQL Schema construction you may face problem when you cannot understand which entrypoints your schema has. And where exactly the code is placed which serve this or that entrypoint.
 
 ![overview](./docs/diagrams/overview.drawio.svg)
 
-`graphql-compose-modules` uses a file-system based schema entrypoint definition (something like does NextJS with its pages concept for routing). You just create folder `schema/` and put inside it the following sub-folders (root directories): `query`, `mutation` and `subscription`. Inside these folders you may put `.js` or `.ts` files with FieldConfigs. Assume you create the following directory structure:
+`graphql-compose-modules` uses a file-system based schema entrypoint definition (something like NextJS does with its pages concept for routing). You just create folder `schema/` and put inside it the following sub-folders (root directories): `query`, `mutation` and `subscription`. Inside these folders you may put `.js` or `.ts` files with FieldConfigs which describes entrypoints. Assume you create the following directory structure:
 
 ```bash
 schema/
@@ -55,11 +55,11 @@ type Subscription {
 }
 ```
 
-If you want rename field `articlesList` to `articleList` in your schema just rename `articlesList.ts` file. If you want to add a new field to Schema – just add a new file to `Query`, `Mutation`, `Subscription` folders. **This simple approach helps you understand entrypoints of your schema without launching the GraphQL server – what you see in folders that you get in GraphQL Schema**.
+If you want rename field `articlesList` to `articles` in your schema just rename `articlesList.ts` file. If you want to add a new field to Schema – just add a new file to `Query`, `Mutation`, `Subscription` folders. **This simple approach helps you understand entrypoints of your schema without launching the GraphQL server – what you see in folders that you get in GraphQL Schema**.
 
 ## Describing Entrypoints in files
 
-Every Entrypoint (FieldConfig definition) is described in separate file. This file contains all information about input args, output type, resolve function and additional fields like description & deprecationReason. As an example let's create `schema/Query/sum.ts` and put inside the following content:
+Every Entrypoint (FieldConfig definition) is described in a separate file. This file contains information about input args, output type, resolve function and additional fields like description, deprecationReason, extensions. As an example let's create `schema/Query/sum.ts` and put inside the following content:
 
 ```ts
 export default {
@@ -79,11 +79,11 @@ export default {
 };
 ```
 
-If you familiar with [graphql-js FieldConfig definition](https://graphql.org/graphql-js/type/#examples) then you may notice that `type` & `args` properties are defined in SDL format. This syntax sugar provided by [graphql-compose](https://github.com/graphql-compose/graphql-compose#examples) package.
+If you are familiar with [graphql-js FieldConfig definition](https://graphql.org/graphql-js/type/#examples) then you may notice that `type` & `args` properties are defined in SDL format. This syntax sugar is provided by [graphql-compose](https://github.com/graphql-compose/graphql-compose#examples) package.
 
 ## Entrypoints with namespaces for big schemas
 
-If your GraphQL Schema has a lot of methods you may create sub-folders for grouping some entrypoints fields according to some Entity or Namespace:
+If your GraphQL Schema has a lot of entrypoints you may create sub-folders for grouping them under Namespaces:
 
 ```bash
 schema/
@@ -100,7 +100,7 @@ schema/
     ...
 ```
 
-With such structure you will get the following schema. Namespace types `QueryArticles` & `MutationArticles` are created automatically:
+With such structure you will get the following schema – namespace types `QueryArticles` & `MutationArticles` are created automatically:
 
 ```graphql
 type Query {
@@ -123,11 +123,11 @@ type MutationArticles {
 }
 ```
 
-You may use sub-folders for `Query` & `Mutation` and all servers supports this feature. But for `Subscription` most current server implementations (eg. [apollo-server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)) does not support this yet.
+You may use namespaces (sub-folders) for `Query` & `Mutation` and all servers supports this feature. But for `Subscription` most current server implementations (eg. [apollo-server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)) does not support this yet.
 
 ## GraphQLSchema construction
 
-In `schema` folder create a file `index.ts` with the following content which traverses `query`, `mutation`, `subscription` folders and create `GraphQLSchema` instance for you:
+In `schema` folder create a file `index.ts` with the following content which traverses `query`, `mutation`, `subscription` folders and creates a `GraphQLSchema` instance for you:
 
 ```ts
 import { buildSchema } from 'graphql-compose-modules';
@@ -150,7 +150,7 @@ server.listen().then(({ url }) => {
 
 ## Advanced GraphQLSchema construction
 
-If you want transform AST of entrypoints (e.g. for adding authorization, logging, tracing) and for merging with another schemas distributed via npm packages – you may use the following advanced way:
+If you want transform AST of entrypoints (e.g. for adding authorization, logging, tracing) and for merging with another schemas distributed via npm packages – you may use the following advanced way for schema construction:
 
 ```ts
 import { directoryToAst, astToSchema, astMerge } from 'graphql-compose-modules';
@@ -175,7 +175,7 @@ export const schema = sc.buildSchema();
 
 ## Writing own transformer for entrypoints
 
-For writing your own transformers you need to use `astVisitor()` method. As an example let's implement `addQueryToMutations` transformer which adds `query: Query` field to all your mutations:
+For writing your own transformers you need to use `astVisitor()` method. For instance let's implement `addQueryToMutations` transformer which adds `query: Query` field to all your mutations:
 
 ```ts
 import { astVisitor, VISITOR_SKIP_CHILDREN, AstRootNode } from 'graphql-compose-modules';
@@ -227,19 +227,19 @@ export function addQueryToMutations(
 
 ## API
 
-For now I provide basic overview of available API methods and I will describe them later.
+For now here is provided basic overview of the available API methods. Then detailed information will be provided later.
 
 ### Main API method:
 
-- `buildSchema(module: NodeModule, opts: BuildOptions): GraphQLSchema` – use this method for creating graphql schema from folder
+- `buildSchema(module: NodeModule, opts: BuildOptions): GraphQLSchema` – use this method for creating graphql schema from directory
 
 ### Advanced API methods:
 
-The following methods helps to use schema composition, applying middlewares and schema transformation via visitor pattern:
+The following methods help to use schema composition, applying middlewares and schema transformation via visitor pattern:
 
 ![overview](./docs/diagrams/ast-transformation.drawio.svg)
 
 - `directoryToAst(module: NodeModule, options: DirectoryToAstOptions): AstRootNode` – traverses directories and construct AST for your graphql entrypoints
 - `astToSchema(ast: AstRootNode, opts: AstToSchemaOptions): SchemaComposer` – converts AST to GraphQL Schema
-- `astMerge(...asts: Array<AstRootNode>): AstRootNode` – combines several ASTs to one AST (helps compose several graphql schemas)
-- `astVisitor(ast: AstRootNode, visitor: AstVisitor): void` – modify AST via visitor pattern
+- `astMerge(...asts: Array<AstRootNode>): AstRootNode` – combines several ASTs to one AST (helps compose several graphql schemas which may be distributed via npm packages)
+- `astVisitor(ast: AstRootNode, visitor: AstVisitor): void` – modify AST via visitor pattern. This method is used for construction of your AST transformers.

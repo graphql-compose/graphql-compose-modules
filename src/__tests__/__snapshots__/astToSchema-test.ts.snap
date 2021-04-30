@@ -1,13 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`astToSchema() Schema ./__testSchema__ schema 1`] = `
-"\\"\\"\\"\\"\\"\\"
-schema {
-  query: Query
-  mutation: Mutation
-}
-
-type Query {
+"type Query {
   field: String
   me(arg: Int): QueryMe
   some: QuerySome
