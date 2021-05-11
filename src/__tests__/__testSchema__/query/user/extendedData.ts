@@ -1,3 +1,5 @@
+import { FieldConfig } from '../../../../typeDefs';
+
 export default {
   type: `
     type UserExtendedData {
@@ -5,4 +7,4 @@ export default {
     }
   `,
   resolve: () => ({ starsCount: 10 }),
-};
+} as FieldConfig;

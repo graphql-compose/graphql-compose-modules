@@ -8,10 +8,12 @@ import {
   isComposeOutputType,
   isSomeOutputTypeDefinitionString,
   inspect,
+  isFunction,
 } from 'graphql-compose';
 import { AstRootNode, AstRootTypeNode, AstDirNode, AstFileNode } from './directoryToAst';
 import dedent from 'dedent';
 import { GraphQLObjectType } from 'graphql';
+import { FieldConfig, NamespaceConfig } from './typeDefs';
 
 export interface AstToSchemaOptions {
   schemaComposer?: SchemaComposer<any>;
@@ -29,7 +31,7 @@ export function astToSchema<TContext = any>(
     if (!opts.schemaComposer) {
       throw new Error(dedent`
         Provided option 'schemaComposer' should be an instance of SchemaComposer class from 'graphql-compose' package. 
-        Recieved:
+        Received:
           ${inspect(opts.schemaComposer)}
       `);
     }
@@ -77,7 +79,7 @@ export function createFields(
 
   if (ast.kind === 'file') {
     parent.addNestedFields({
-      [name]: prepareFieldConfig(sc, ast),
+      [name]: prepareFieldConfig(sc, ast) as FieldConfig,
     });
     return;
   }
@@ -190,8 +192,8 @@ function prepareNamespaceFieldConfig(
 function prepareFieldConfig(
   sc: SchemaComposer<any>,
   ast: AstFileNode
-): ObjectTypeComposerFieldConfig<any, any> {
-  const fc = ast.code.default as any;
+): FieldConfig | NamespaceConfig {
+  const fc = ast.code.default;
 
   if (!fc) {
     throw new Error(dedent`
