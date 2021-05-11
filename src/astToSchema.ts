@@ -224,6 +224,9 @@ function isSomeOutputTypeDefinition(type: any): boolean {
   } else if (Array.isArray(type)) {
     // type: ['String']
     return isSomeOutputTypeDefinition(type[0]);
+  } else if (isFunction(type)) {
+    // pass thunked type without internal checks
+    return true;
   } else {
     // type: 'type User { name: String }'
     return isComposeOutputType(type);
