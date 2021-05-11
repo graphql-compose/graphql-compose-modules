@@ -16,16 +16,26 @@ describe('astMerge', () => {
     const schema = astToSchema(mergedAst);
 
     expect(schema.toSDL()).toMatchInlineSnapshot(`
-      "type Mutation {
-        \\"\\"\\"A.mutation.createTask\\"\\"\\"
-        createTask: String
-      }
-
-      type Query {
+      "type Query {
         \\"\\"\\"B.query.me\\"\\"\\"
         me: String
         tasks: QueryTasks
       }
+
+      type Mutation {
+        \\"\\"\\"A.mutation.createTask\\"\\"\\"
+        createTask: String
+      }
+
+      type Subscription {
+        \\"\\"\\"B.subscription.events\\"\\"\\"
+        events: String
+      }
+
+      \\"\\"\\"
+      The \`String\` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+      \\"\\"\\"
+      scalar String
 
       type QueryTasks {
         \\"\\"\\"B.query.tasks.byId\\"\\"\\"
@@ -36,16 +46,6 @@ describe('astMerge', () => {
 
         \\"\\"\\"B.query.tasks.byIds\\"\\"\\"
         byIds: String
-      }
-
-      \\"\\"\\"
-      The \`String\` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-      \\"\\"\\"
-      scalar String
-
-      type Subscription {
-        \\"\\"\\"B.subscription.events\\"\\"\\"
-        events: String
       }"
     `);
   });
