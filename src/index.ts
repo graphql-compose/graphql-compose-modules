@@ -1,13 +1,18 @@
 import { directoryToAst, DirectoryToAstOptions } from './directoryToAst';
 import { astToSchema, AstToSchemaOptions } from './astToSchema';
+import { SchemaComposer } from 'graphql-compose';
+import { GraphQLSchema } from 'graphql';
 
 export interface BuildOptions extends DirectoryToAstOptions, AstToSchemaOptions {}
 
-export function buildSchema(module: NodeModule, opts: BuildOptions = {}) {
+export function buildSchema(module: NodeModule, opts: BuildOptions = {}): GraphQLSchema {
   return loadSchemaComposer(module, opts).buildSchema();
 }
 
-export function loadSchemaComposer(module: NodeModule, opts: BuildOptions) {
+export function loadSchemaComposer<TContext = any>(
+  module: NodeModule,
+  opts: BuildOptions
+): SchemaComposer<TContext> {
   const ast = directoryToAst(module, opts);
   const sc = astToSchema(ast, opts);
   return sc;
@@ -25,6 +30,7 @@ export {
 } from './directoryToAst';
 export { astToSchema, AstToSchemaOptions } from './astToSchema';
 export * from './testHelpers';
+export * from './typeDefs';
 
 export {
   astVisitor,

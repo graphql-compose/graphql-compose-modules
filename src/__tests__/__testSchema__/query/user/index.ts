@@ -1,3 +1,5 @@
+import { NamespaceConfig } from '../../../../typeDefs';
+
 export default {
   type: `
     type UserAwesomeType {
@@ -12,4 +14,4 @@ export default {
       lastName: 'User',
     };
   },
-};
+} as NamespaceConfig;

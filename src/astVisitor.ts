@@ -57,7 +57,7 @@ export function visitNode(
   node: AstDirNode | AstFileNode | AstRootTypeNode,
   visitor: AstVisitor,
   info: VisitInfo
-) {
+): void {
   let result: VisitorEmptyResult | AstDirNode | AstFileNode | AstRootTypeNode;
   if (node.kind === 'dir') {
     if (visitor.DIR) result = visitor.DIR(node, info);

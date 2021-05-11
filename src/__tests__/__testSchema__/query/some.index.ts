@@ -1,3 +1,5 @@
+import { FieldConfig } from '../../../typeDefs';
+
 export default {
   type: `
     type SomeIndexFileType {
@@ -5,4 +7,4 @@ export default {
     }
   `,
   resolve: () => ({ awesomeValue: 'awesomeValue' }),
-};
+} as FieldConfig;

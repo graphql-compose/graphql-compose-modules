@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { join, resolve, dirname, basename } from 'path';
+import { FieldConfig, NamespaceConfig } from './typeDefs';
 
 export interface DirectoryToAstOptions {
   relativePath?: string;
@@ -35,7 +36,7 @@ export interface AstDirNode extends AstBaseNode {
 export interface AstFileNode extends AstBaseNode {
   kind: 'file';
   code: {
-    default?: any;
+    default?: FieldConfig | NamespaceConfig;
   };
 }
 

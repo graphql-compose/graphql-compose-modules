@@ -177,10 +177,10 @@ describe('astVisitor', () => {
         }
       },
       FILE: (node) => {
-        const currentResolve = node.code.default.resolve;
+        const currentResolve = node.code.default?.resolve;
         if (currentResolve) {
-          const description = node.code.default.description;
-          node.code.default.resolve = (s: any, a: any, c: any, i: any) => {
+          const description = node.code.default?.description;
+          (node.code as any).default.resolve = (s: any, a: any, c: any, i: any) => {
             logs.push({
               description,
               args: a,
