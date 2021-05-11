@@ -1,4 +1,4 @@
 export default {
-  type: 'Boolean',
+  type: (sc) => sc.get('Boolean'),
   resolve: () => true,
 };
