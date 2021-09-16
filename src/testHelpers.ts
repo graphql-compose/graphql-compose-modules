@@ -4,6 +4,7 @@ import {
   Resolver,
   ObjectTypeComposerFieldConfigAsObjectDefinition,
   inspect,
+  SchemaPrinterOptions,
 } from 'graphql-compose';
 
 const FIELD = 'field';
@@ -124,16 +125,20 @@ export async function testOperationErrors(
   return res?.errors;
 }
 
-export function testSDL(opts: {
-  fc: ObjectTypeComposerFieldConfigAsObjectDefinition<any, any, any> | Resolver;
-  schemaComposer?: SchemaComposer<any>;
-  deep?: boolean;
-}): string {
+export function testSDL(
+  opts: {
+    fc: ObjectTypeComposerFieldConfigAsObjectDefinition<any, any, any> | Resolver;
+    schemaComposer?: SchemaComposer<any>;
+    deep?: boolean;
+  } & SchemaPrinterOptions
+): string {
   const sc = opts.schemaComposer || new SchemaComposer();
   sc.Query.setField(FIELD, opts.fc);
   sc.buildSchema();
   return sc.Query.toSDL({
+    ...opts,
     deep: opts.deep ?? true,
     omitDescriptions: true,
+    omitSpecifiedByUrl: true,
   });
 }
