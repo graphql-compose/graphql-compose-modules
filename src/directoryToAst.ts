@@ -2,13 +2,6 @@ import fs from 'fs';
 import { join, resolve, dirname, basename } from 'path';
 import { FieldConfig, NamespaceConfig } from './typeDefs';
 
-export interface DirectoryToAstOptions {
-  relativePath?: string;
-  extensions?: string[];
-  include?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
-  exclude?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
-}
-
 export type AstNodeKinds = 'rootType' | 'dir' | 'file' | 'root';
 
 export interface AstBaseNode {
@@ -51,6 +44,23 @@ export const defaultOptions: DirectoryToAstOptions = {
   extensions: ['js', 'ts'],
 };
 
+export interface DirectoryToAstOptions {
+  /** Scan relative directory to `module` which was provided as a first arg to directoryToAst method. By default `.` */
+  relativePath?: string;
+  /** Which file extensions should be loaded. By default: .js, .ts */
+  extensions?: string[];
+  /** Regexp or custom function which determines should be loaded file/dir or not */
+  include?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
+  /** Regexp or custom function which determines should file/dir be skipped. It take precedence over `include` option. */
+  exclude?: RegExp | ((path: string, kind: 'dir' | 'file', filename: string) => boolean);
+}
+
+/**
+ * Traverses directories and construct AST for your graphql entrypoints.
+ *
+ * @param m – is a NodeJS Module which provides a way to load modules from scanned dir in the regular nodejs way
+ * @param options – set of options which helps to customize rules of what files/dirs should be loaded or not
+ */
 export function directoryToAst(
   m: NodeModule,
   options: DirectoryToAstOptions = defaultOptions
