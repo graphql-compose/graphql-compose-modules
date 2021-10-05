@@ -16,11 +16,41 @@ import { GraphQLObjectType } from 'graphql';
 import { FieldConfig, NamespaceConfig } from './typeDefs';
 
 export interface AstToSchemaOptions {
+  /**
+   * Pass here already existed SchemaComposer instance
+   * which already contains some types (eg with custom Scalars).
+   *
+   * Or new SchemaComposer instance will be created.
+   */
   schemaComposer?: SchemaComposer<any>;
   prefix?: string;
   suffix?: string;
 }
 
+/**
+ * Transform AST to GraphQL Schema.
+ *
+ * @example
+ *   // Scan some directory for getting Schema entrypoints as AST nodes.
+ *   const ast = directoryToAst(module);
+ *
+ *   // [Optional] Combining severals ast into source
+ *   // Useful if some sub-schemas are delivered via packages
+ *   // or created n separate directories.
+ *   const newAST = astMerge(ast, ast1, ast2, ...);
+ *
+ *   // [Optional] Some `ast` modifications
+ *   // Useful for writing some middlewares
+ *   // which transform FieldConfigs entrypoints.
+ *   astVisitor(newAST, visitorFns);
+ *
+ *   // Create SchemaComposer instance with all populated types & fields
+ *   // It provides declarative programmatic access to modify you schema
+ *   const schemaComposer = astToSchema(newAST, opts);
+ *
+ *   // Create GraphQLSchema instance which is ready for runtime.
+ *   const schema = schemaComposer.buildSchema();;
+ */
 export function astToSchema<TContext = any>(
   ast: AstRootNode,
   opts: AstToSchemaOptions = {}

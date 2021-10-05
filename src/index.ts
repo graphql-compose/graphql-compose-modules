@@ -5,10 +5,22 @@ import { GraphQLSchema } from 'graphql';
 
 export interface BuildOptions extends DirectoryToAstOptions, AstToSchemaOptions {}
 
+/**
+ * Traverses directories and return GraphQLSchema instance from `graphql-js`.
+ *
+ * @param m – is a NodeJS Module which provides a way to load modules from scanned dir in the regular nodejs way
+ * @param options – set of options which helps to customize rules of what files/dirs should be loaded or not
+ */
 export function buildSchema(module: NodeModule, opts: BuildOptions = {}): GraphQLSchema {
   return loadSchemaComposer(module, opts).buildSchema();
 }
 
+/**
+ * Traverses directories and return SchemaComposer instance from `graphql-compose`.
+ *
+ * @param m – is a NodeJS Module which provides a way to load modules from scanned dir in the regular nodejs way
+ * @param options – set of options which helps to customize rules of what files/dirs should be loaded or not
+ */
 export function loadSchemaComposer<TContext = any>(
   module: NodeModule,
   opts: BuildOptions
