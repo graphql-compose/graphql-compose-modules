@@ -1,3 +1,4 @@
+import { FieldConfig } from 'graphql-compose-modules';
 import { getArticles, ArticleTC } from '../../models/article';
 
 export default {
@@ -7,4 +8,4 @@ export default {
     perPage: { type: 'Int', defaultValue: 3 },
   },
   resolve: (_, args) => getArticles({ page: args.page, perPage: args.perPage }),
-};
+} as FieldConfig;

@@ -1,3 +1,4 @@
+import { FieldConfig } from 'graphql-compose-modules';
 import { ArticleTC, removeArticle } from '../../models/article';
 
 export default {
@@ -6,4 +7,4 @@ export default {
     id: 'Int!',
   },
   resolve: (_, args) => removeArticle(args.id),
-};
+} as FieldConfig;
