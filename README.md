@@ -185,28 +185,27 @@ export function addQueryToMutations(
   ast: AstRootNode,
   schemaComposer: SchemaComposer<any>
 ): void {
-  astVisitor(ast, {
+  astVisitor(ast, schemaComposer, {
     // skip `query` & `subscriptions` root types
-    ROOT_TYPE: (node) => {
-      if (node.name !== 'mutation') {
+    ROOT_TYPE: (info) => {
+      if (!info.isMutation) {
         return VISITOR_SKIP_CHILDREN;
       }
       return;
     },
     // for every file in `mutation` folder try to add `query` field if it does not exists
-    FILE: (node, nodeInfo) => {
-      const fieldConfig = node.code.default || {};
+    FILE: (info) => {
+      // get FieldConfig from loaded file in `schema` folder
+      const fieldConfig = info.fieldConfig || {};
+
+      // if `resolve` method does not exist then skip this transformation
       const next = fieldConfig.resolve;
       if (!next) return;
 
-      const outputType = fieldConfig.type;
-      if (!outputType) return;
-      const outputTC = schemaComposer.typeMapper.convertOutputTypeDefinition(
-        outputType,
-        nodeInfo.name,
-        nodeInfo?.parent?.name
-      );
-      if (!(outputTC instanceof ObjectTypeComposer)) return;
+      // if output type isn't an object then skip this transformation
+      if (!info.isOutputTypeIsObject()) return;
+
+      const outputTC = info.getOutputUnwrappedOTC();
       if (outputTC.hasField('query')) return;
       outputTC.setField('query', {
         description: 'Sub-query which have to be executed after mutation.',
@@ -227,8 +226,6 @@ export function addQueryToMutations(
 
 ## API
 
-For now here is provided basic overview of the available API methods. Then detailed information will be provided later.
-
 ### Main API method:
 
 - `buildSchema(module: NodeModule, opts: BuildOptions): GraphQLSchema` – use this method for creating graphql schema from directory
@@ -242,4 +239,4 @@ The following methods help to use schema composition, applying middlewares and s
 - `directoryToAst(module: NodeModule, options: DirectoryToAstOptions): AstRootNode` – traverses directories and construct AST for your graphql entrypoints
 - `astToSchema(ast: AstRootNode, opts: AstToSchemaOptions): SchemaComposer` – converts AST to GraphQL Schema
 - `astMerge(...asts: Array<AstRootNode>): AstRootNode` – combines several ASTs to one AST (helps compose several graphql schemas which may be distributed via npm packages)
-- `astVisitor(ast: AstRootNode, visitor: AstVisitor): void` – modify AST via visitor pattern. This method is used for construction of your AST transformers.
+- `astVisitor(ast: AstRootNode, schemaComposer: SchemaComposer, visitor: AstVisitor): void` – modify AST via visitor pattern. This method is used for construction of your AST transformers.
