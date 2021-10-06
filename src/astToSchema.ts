@@ -109,7 +109,7 @@ export function createFields(
 
   if (ast.kind === 'file') {
     parent.addNestedFields({
-      [name]: prepareFieldConfig(sc, ast) as FieldConfig,
+      [name]: prepareFieldConfig(ast) as FieldConfig,
     });
     return;
   }
@@ -177,7 +177,7 @@ function prepareNamespaceFieldConfig(
       Eg:
         export default {
           type: 'SomeObjectTypeName',
-          resolve: () => Date.now(),
+          resolve: () => ({}),
         };
     `);
   }
@@ -219,10 +219,7 @@ function prepareNamespaceFieldConfig(
   return fc;
 }
 
-function prepareFieldConfig(
-  sc: SchemaComposer<any>,
-  ast: AstFileNode
-): FieldConfig | NamespaceConfig {
+function prepareFieldConfig(ast: AstFileNode): FieldConfig | NamespaceConfig {
   const fc = ast.code.default;
 
   if (!fc) {
