@@ -16,8 +16,8 @@ import {
 } from './directoryToAst';
 import { FieldConfig } from './typeDefs';
 
-interface VisitInfoData<TContext = any> {
-  node: AstDirNode | AstFileNode | AstRootTypeNode;
+interface VisitInfoData<TNode extends AstDirNode | AstFileNode | AstRootTypeNode, TContext = any> {
+  node: TNode;
   nodeParent: AstDirNode | AstRootTypeNode | AstRootNode;
   operation: RootTypeNames;
   fieldName: string;
@@ -25,8 +25,8 @@ interface VisitInfoData<TContext = any> {
   schemaComposer: SchemaComposer<TContext>;
 }
 
-export class VisitInfo<TContext = any> {
-  node: AstDirNode | AstFileNode | AstRootTypeNode;
+export class VisitInfo<TNode extends AstDirNode | AstFileNode | AstRootTypeNode, TContext = any> {
+  node: TNode;
   /** Parent AST node from directoryToAst */
   nodeParent: AstDirNode | AstRootTypeNode | AstRootNode;
   /** Brunch of schema under which is working visitor. Can be: query, mutation, subscription */
@@ -38,7 +38,7 @@ export class VisitInfo<TContext = any> {
   /** Type registry */
   schemaComposer: SchemaComposer<TContext>;
 
-  constructor(data: VisitInfoData<TContext>) {
+  constructor(data: VisitInfoData<TNode, TContext>) {
     this.node = data.node;
     this.operation = data.operation;
     this.nodeParent = data.nodeParent;
@@ -121,14 +121,13 @@ export class VisitInfo<TContext = any> {
    * This is mutable object and is shared between all calls.
    */
   get fieldConfig(): FieldConfig {
-    if (this.node.kind === 'file') {
-      return this.node.code?.default as FieldConfig;
-    } else if (this.node.kind === 'dir' || this.node.kind === 'rootType') {
-      return this.node.namespaceConfig?.code?.default as FieldConfig;
+    const node = this.node;
+    if (node.kind === 'file') {
+      return node.code?.default as FieldConfig;
+    } else if (node.kind === 'dir' || this.node.kind === 'rootType') {
+      return node.namespaceConfig?.code?.default as FieldConfig;
     }
-    throw new Error(
-      `Cannot get fieldConfig. Node has some strange kind: ${(this.node as any).kind}`
-    );
+    throw new Error(`Cannot get fieldConfig. Node has some strange kind: ${node.kind}`);
   }
 
   /**
