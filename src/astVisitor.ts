@@ -17,10 +17,10 @@ export type VisitorEmptyResult =
   | typeof VISITOR_REMOVE_NODE
   | typeof VISITOR_SKIP_CHILDREN;
 
-export type VisitKindFn<NodeKind> = (
+export type VisitKindFn<TNode extends AstDirNode | AstFileNode | AstRootTypeNode> = (
   /** Info & helper functions from visitor during traversing AST tree */
-  info: VisitInfo
-) => VisitorEmptyResult | NodeKind;
+  info: VisitInfo<TNode>
+) => VisitorEmptyResult | TNode;
 
 /**
  * Functions for every type of AST nodes which will be called by visitor.
@@ -66,14 +66,17 @@ export function astVisitor(
   });
 }
 
-export function visitNode(info: VisitInfo, visitor: AstVisitor): void {
+export function visitNode(
+  info: VisitInfo<AstDirNode | AstFileNode | AstRootTypeNode>,
+  visitor: AstVisitor
+): void {
   let result: VisitorEmptyResult | AstDirNode | AstFileNode | AstRootTypeNode;
   if (info.node.kind === 'dir') {
-    if (visitor.DIR) result = visitor.DIR(info);
+    if (visitor.DIR) result = visitor.DIR(info as VisitInfo<AstDirNode>);
   } else if (info.node.kind === 'file') {
-    if (visitor.FILE) result = visitor.FILE(info);
+    if (visitor.FILE) result = visitor.FILE(info as VisitInfo<AstFileNode>);
   } else if (info.node.kind === 'rootType') {
-    if (visitor.ROOT_TYPE) result = visitor.ROOT_TYPE(info);
+    if (visitor.ROOT_TYPE) result = visitor.ROOT_TYPE(info as VisitInfo<AstRootTypeNode>);
   }
 
   if (result === VISITOR_REMOVE_NODE) {
