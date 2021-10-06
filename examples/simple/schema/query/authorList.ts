@@ -1,3 +1,4 @@
+import { FieldConfig } from 'graphql-compose-modules';
 import { getAuthors, AuthorTC } from '../../models/author';
 
 export default {
@@ -7,4 +8,4 @@ export default {
     perPage: { type: 'Int', defaultValue: 3 },
   },
   resolve: (_, args) => getAuthors({ page: args.page, perPage: args.perPage }),
-};
+} as FieldConfig;

@@ -1,3 +1,4 @@
+import { FieldConfig } from 'graphql-compose-modules';
 import { AuthorTC, addAuthor } from '../../models/author';
 
 export default {
@@ -6,4 +7,4 @@ export default {
     name: 'String!',
   },
   resolve: (_, args) => addAuthor(args),
-};
+} as FieldConfig;

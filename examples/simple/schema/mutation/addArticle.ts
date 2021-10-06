@@ -1,3 +1,4 @@
+import { FieldConfig } from 'graphql-compose-modules';
 import { ArticleTC, addArticle } from '../../models/article';
 
 export default {
@@ -8,4 +9,4 @@ export default {
     authorId: 'Int',
   },
   resolve: (_, args) => addArticle(args),
-};
+} as FieldConfig;

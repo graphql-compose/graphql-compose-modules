@@ -4,13 +4,16 @@
     "target": "es5",
     "module": "commonjs",
     "strict": true,
-    "rootDir": "./src",
-    "outDir": "./lib",
+    "rootDir": "./",
     "lib": ["es2017"],
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "graphql-compose-modules": ["./", "./src"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "examples/**/*"]
 }
