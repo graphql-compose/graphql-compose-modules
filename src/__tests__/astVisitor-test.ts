@@ -3,20 +3,23 @@ import { directoryToAst, AstRootNode } from '../directoryToAst';
 import { astToSchema } from '../astToSchema';
 import { graphql } from 'graphql';
 import sortBy from 'lodash.sortby';
+import { SchemaComposer } from 'graphql-compose';
 
 describe('astVisitor', () => {
   let ast: AstRootNode;
+  const schemaComposer = new SchemaComposer();
 
   beforeEach(() => {
     ast = directoryToAst(module, { relativePath: './__testSchema__' });
+    schemaComposer.clear();
   });
 
   it('should visit all ROOT_TYPEs', () => {
     const names: string[] = [];
-    astVisitor(ast, {
-      ROOT_TYPE: (node, info) => {
-        names.push(info.name);
-        expect(info.parent).toBe(ast);
+    astVisitor(ast, schemaComposer, {
+      ROOT_TYPE: (info) => {
+        names.push(info.fieldName);
+        expect(info.nodeParent).toBe(ast);
       },
     });
     expect(names.sort()).toEqual(['query', 'mutation'].sort());
@@ -24,9 +27,9 @@ describe('astVisitor', () => {
 
   it('should visit all DIRs', () => {
     const dirs: string[] = [];
-    astVisitor(ast, {
-      DIR: (node, info) => {
-        dirs.push(`${info.path.join('.')}.${info.name}`);
+    astVisitor(ast, schemaComposer, {
+      DIR: (info) => {
+        dirs.push(`${info.fieldPath.join('.')}.${info.fieldName}`);
       },
     });
     expect(dirs.sort()).toEqual(
@@ -45,9 +48,9 @@ describe('astVisitor', () => {
 
   it('should visit all FILEs', () => {
     const files: string[] = [];
-    astVisitor(ast, {
-      FILE: (node, info) => {
-        files.push(`${info.path.join('.')}.${info.name}`);
+    astVisitor(ast, schemaComposer, {
+      FILE: (info) => {
+        files.push(`${info.fieldPath.join('.')}.${info.fieldName}`);
       },
     });
     expect(files.sort()).toEqual(
@@ -73,7 +76,7 @@ describe('astVisitor', () => {
   });
 
   it('`null` should remove nodes from ast', () => {
-    astVisitor(ast, {
+    astVisitor(ast, schemaComposer, {
       DIR: () => {
         return VISITOR_REMOVE_NODE;
       },
@@ -86,24 +89,24 @@ describe('astVisitor', () => {
 
   it('`false` should not traverse children', () => {
     const files: string[] = [];
-    astVisitor(ast, {
-      ROOT_TYPE: (node, info) => {
+    astVisitor(ast, schemaComposer, {
+      ROOT_TYPE: (info) => {
         // skip all from `query`
-        if (info.name === 'query') return VISITOR_SKIP_CHILDREN;
+        if (info.isQuery()) return VISITOR_SKIP_CHILDREN;
       },
-      DIR: (node, info) => {
+      DIR: (info) => {
         // skip all except `auth` dir
-        if (info.name !== 'auth') return VISITOR_SKIP_CHILDREN;
+        if (info.fieldName !== 'auth') return VISITOR_SKIP_CHILDREN;
       },
-      FILE: (node, info) => {
-        files.push(`${info.path.join('.')}.${info.name}`);
+      FILE: (info) => {
+        files.push(`${info.fieldPath.join('.')}.${info.fieldName}`);
       },
     });
     expect(files.sort()).toEqual(['mutation.auth.login', 'mutation.auth.logout'].sort());
   });
 
   it('`any_node` should replace current node', () => {
-    astVisitor(ast, {
+    astVisitor(ast, schemaComposer, {
       ROOT_TYPE: () => {
         return { absPath: '', children: {}, kind: 'rootType', name: 'MOCK' };
       },
@@ -118,9 +121,9 @@ describe('astVisitor', () => {
   describe('visitFn should have path & operation & name properties', () => {
     it('check ROOT_TYPE', () => {
       const nodes = [] as Array<any>;
-      astVisitor(ast, {
-        ROOT_TYPE: (node, info) => {
-          nodes.push({ operation: info.operation, name: info.name, path: info.path });
+      astVisitor(ast, schemaComposer, {
+        ROOT_TYPE: (info) => {
+          nodes.push({ operation: info.operation, name: info.fieldName, path: info.fieldPath });
         },
       });
       expect(sortBy(nodes, ['operation', 'name'])).toEqual([
@@ -131,12 +134,12 @@ describe('astVisitor', () => {
 
     it('check DIR & FILE elements', () => {
       const nodes = [] as Array<any>;
-      astVisitor(ast, {
-        DIR: (node, info) => {
-          nodes.push({ operation: info.operation, name: info.name, path: info.path });
+      astVisitor(ast, schemaComposer, {
+        DIR: (info) => {
+          nodes.push({ operation: info.operation, name: info.fieldName, path: info.fieldPath });
         },
-        FILE: (node, info) => {
-          nodes.push({ operation: info.operation, name: info.name, path: info.path });
+        FILE: (info) => {
+          nodes.push({ operation: info.operation, name: info.fieldName, path: info.fieldPath });
         },
       });
       expect(sortBy(nodes, ['operation', 'name'])).toEqual([
@@ -170,17 +173,17 @@ describe('astVisitor', () => {
 
   it('try to wrap all mutations', async () => {
     const logs: any[] = [];
-    astVisitor(ast, {
+    astVisitor(ast, schemaComposer, {
       ROOT_TYPE: (node) => {
-        if (node.name !== 'mutation') {
+        if (!node.isMutation()) {
           return VISITOR_SKIP_CHILDREN;
         }
       },
       FILE: (node) => {
-        const currentResolve = node.code.default?.resolve;
+        const currentResolve = node.fieldConfig?.resolve;
         if (currentResolve) {
-          const description = node.code.default?.description;
-          (node.code as any).default.resolve = (s: any, a: any, c: any, i: any) => {
+          const description = node.fieldConfig?.description;
+          node.fieldConfig.resolve = (s: any, a: any, c: any, i: any) => {
             logs.push({
               description,
               args: a,

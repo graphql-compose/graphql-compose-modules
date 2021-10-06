@@ -1,10 +1,6 @@
-import {
-  AstRootTypeNode,
-  AstDirNode,
-  AstFileNode,
-  AstRootNode,
-  RootTypeNames,
-} from './directoryToAst';
+import { SchemaComposer } from 'graphql-compose';
+import { AstRootTypeNode, AstDirNode, AstFileNode, AstRootNode } from './directoryToAst';
+import { VisitInfo } from './VisitInfo';
 
 /**
  * Do not traverse children, and go to next sibling.
@@ -22,9 +18,7 @@ export type VisitorEmptyResult =
   | typeof VISITOR_SKIP_CHILDREN;
 
 export type VisitKindFn<NodeKind> = (
-  /** Information about `node` obtained in `directoryToAst()` */
-  node: NodeKind,
-  /** Information from visitor during traversing AST tree */
+  /** Info & helper functions from visitor during traversing AST tree */
   info: VisitInfo
 ) => VisitorEmptyResult | NodeKind;
 
@@ -37,80 +31,79 @@ export type AstVisitor = {
   ROOT_TYPE?: VisitKindFn<AstRootTypeNode>;
 };
 
-export interface VisitInfo {
-  /** Brunch of schema under which is working visitor. Can be: query, mutation, subscription */
-  operation: RootTypeNames;
-  /** Parent AST node from directoryToAst */
-  parent: AstDirNode | AstRootTypeNode | AstRootNode;
-  /** Name of field for current FieldConfig */
-  name: string;
-  /** List of parent names starting from root */
-  path: string[];
-}
-
 /**
  * Traverse AST for applying modifications to DIRs, FILEs & ROOT_TYPEs
  * Useful for writing middlewares which transform FieldConfigs entrypoints.
  *
  * @example
  *   const ast = directoryToAst(module);
- *   astVisitor(ast, {
+ *   astVisitor(ast, schemaComposer, {
  *     ROOT_TYPE: () => {}, // run for query, mutation, subscription
  *     DIR: () => {}, // executes on visiting DIR node
  *     FILE: () => {}, // executes on visiting FILE node
  *   });
  */
-export function astVisitor(ast: AstRootNode, visitor: AstVisitor): void {
+export function astVisitor(
+  ast: AstRootNode,
+  schemaComposer: SchemaComposer<any>,
+  visitor: AstVisitor
+): void {
   (Object.keys(ast.children) as Array<keyof typeof ast.children>).forEach((operation) => {
-    const rootNode = ast.children[operation];
-    if (!rootNode) return;
+    const node = ast.children[operation];
+    if (!node) return;
 
-    visitNode(rootNode, visitor, {
-      parent: ast,
-      name: operation,
-      path: [],
-      operation,
-    });
+    visitNode(
+      new VisitInfo({
+        node,
+        nodeParent: ast,
+        fieldName: operation,
+        fieldPath: [],
+        operation,
+        schemaComposer,
+      }),
+      visitor
+    );
   });
 }
 
-export function visitNode(
-  node: AstDirNode | AstFileNode | AstRootTypeNode,
-  visitor: AstVisitor,
-  info: VisitInfo
-): void {
+export function visitNode(info: VisitInfo, visitor: AstVisitor): void {
   let result: VisitorEmptyResult | AstDirNode | AstFileNode | AstRootTypeNode;
-  if (node.kind === 'dir') {
-    if (visitor.DIR) result = visitor.DIR(node, info);
-  } else if (node.kind === 'file') {
-    if (visitor.FILE) result = visitor.FILE(node, info);
-  } else if (node.kind === 'rootType') {
-    if (visitor.ROOT_TYPE) result = visitor.ROOT_TYPE(node, info);
+  if (info.node.kind === 'dir') {
+    if (visitor.DIR) result = visitor.DIR(info);
+  } else if (info.node.kind === 'file') {
+    if (visitor.FILE) result = visitor.FILE(info);
+  } else if (info.node.kind === 'rootType') {
+    if (visitor.ROOT_TYPE) result = visitor.ROOT_TYPE(info);
   }
 
   if (result === VISITOR_REMOVE_NODE) {
     // `null` - means remove node from Ast and do not traverse children
-    delete (info.parent.children as any)[info.name];
+    delete (info.nodeParent.children as any)[info.fieldName];
     return;
   } else if (result === VISITOR_SKIP_CHILDREN) {
     // `false` - do not traverse children
     return;
   } else if (result) {
     // replace node
-    (info.parent.children as any)[info.name] = result;
+    (info.nodeParent.children as any)[info.fieldName] = result;
   } else {
     // `undefined` - just move further
-    result = node;
+    result = info.node;
   }
 
   if (result.kind === 'dir' || result.kind === 'rootType') {
-    forEachKey(result.children, (childNode: AstDirNode | AstFileNode, name) => {
-      visitNode(childNode, visitor, {
-        parent: result as AstDirNode,
-        name,
-        path: [...info.path, info.name],
-        operation: info.operation,
-      });
+    forEachKey(result.children, (childNode: AstDirNode | AstFileNode, fieldName) => {
+      visitNode(
+        new VisitInfo({
+          node: childNode,
+          nodeParent: result as AstDirNode,
+          fieldName,
+          fieldPath: [...info.fieldPath, info.fieldName],
+          operation: info.operation,
+          schemaComposer: info.schemaComposer,
+        }),
+        visitor
+      );
     });
   }
 }

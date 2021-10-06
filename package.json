@@ -2,7 +2,7 @@
   "name": "graphql-compose-modules",
   "license": "MIT",
   "version": "0.0.0-development",
-  "description": "A toolset for construction GraphQL Schema via file structure",
+  "description": "A toolkit for construction GraphQL Schema via file structure",
   "repository": "https://github.com/graphql-compose/graphql-compose-modules",
   "homepage": "https://github.com/graphql-compose/graphql-compose-modules",
   "main": "lib/index",
