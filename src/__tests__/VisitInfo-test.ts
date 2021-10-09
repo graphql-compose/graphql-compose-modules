@@ -55,6 +55,17 @@ describe('VisitInfo', () => {
       'debug',
       'ping',
     ]);
+
+    const info2 = new VisitInfo({
+      operation: 'query',
+      fieldName: 'namespace.ping',
+      fieldPath: ['query.storage'],
+      node,
+      nodeParent,
+      schemaComposer,
+    });
+    expect(info2.getFieldPathArray()).toEqual(['storage', 'namespace', 'ping']);
+    expect(info2.getFieldPathArray({ omitFieldName: true })).toEqual(['storage', 'namespace']);
   });
 
   it('getFieldPathDotted()', () => {
