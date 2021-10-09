@@ -81,14 +81,14 @@ export function visitNode(
 
   if (result === VISITOR_REMOVE_NODE) {
     // `null` - means remove node from Ast and do not traverse children
-    delete (info.nodeParent.children as any)[info.fieldName];
+    delete (info.nodeParent.children as any)[info.node.name];
     return;
   } else if (result === VISITOR_SKIP_CHILDREN) {
     // `false` - do not traverse children
     return;
   } else if (result) {
     // replace node
-    (info.nodeParent.children as any)[info.fieldName] = result;
+    (info.nodeParent.children as any)[info.node.name] = result;
   } else {
     // `undefined` - just move further
     result = info.node;

@@ -42,9 +42,18 @@ export class VisitInfo<TNode extends AstDirNode | AstFileNode | AstRootTypeNode,
     this.node = data.node;
     this.operation = data.operation;
     this.nodeParent = data.nodeParent;
-    this.fieldName = data.fieldName;
-    this.fieldPath = data.fieldPath;
     this.schemaComposer = data.schemaComposer;
+
+    this.fieldPath = data.fieldPath;
+    if (data.fieldName.indexOf('.')) {
+      // if fieldName has dots, then split it
+      const parts = data.fieldName.split('.').filter(Boolean);
+      const fieldName = parts.pop() as string;
+      this.fieldName = fieldName;
+      this.fieldPath.push(...parts);
+    } else {
+      this.fieldName = data.fieldName;
+    }
   }
 
   /**
@@ -95,6 +104,7 @@ export class VisitInfo<TNode extends AstDirNode | AstFileNode | AstRootTypeNode,
       res.push(this.fieldName);
     }
 
+    // slice(1) - remove first element from array
     return opts?.includeOperation ? res : res.slice(1);
   }
 
