@@ -7,8 +7,8 @@ describe('astMerge', () => {
   let ast2: AstRootNode;
 
   beforeEach(() => {
-    ast1 = directoryToAst(module, { relativePath: './__fixtures__/merge/schema1' });
-    ast2 = directoryToAst(module, { relativePath: './__fixtures__/merge/schema2' });
+    ast1 = directoryToAst(module, { rootDir: './__fixtures__/merge/schema1' });
+    ast2 = directoryToAst(module, { rootDir: './__fixtures__/merge/schema2' });
   });
 
   it('should merge two schemas', () => {

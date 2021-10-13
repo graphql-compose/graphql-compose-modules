@@ -1,19 +1,24 @@
 {
   "compilerOptions": {
-    "noEmit": true,
-    "target": "es5",
+    "target": "es2016",
     "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "strict": true,
     "rootDir": "./",
     "lib": ["es2017"],
     "skipLibCheck": true,
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["node", "jest"],
     "paths": {
       "graphql-compose-modules": ["./", "./src"]
-    }
+    },
   },
-  "include": ["src/**/*", "examples/**/*"]
+  "include": ["src/**/*", "examples/**/*"],
+  "exclude": ["./node_modules"]
 }
