@@ -7,7 +7,7 @@ import dedent from 'dedent';
 
 describe('astToSchema()', () => {
   describe('Schema ./__testSchema__', () => {
-    const ast = directoryToAst(module, { relativePath: './__testSchema__' });
+    const ast = directoryToAst(module, { rootDir: './__testSchema__' });
     const sc = astToSchema(ast);
 
     it('should return schema composer', () => {
@@ -97,7 +97,7 @@ describe('astToSchema()', () => {
 
   it('should properly set name for nested fields with dot notation', () => {
     const ast = directoryToAst(module, {
-      relativePath: './__testSchema__',
+      rootDir: './__testSchema__',
       include: /query\.auth$|query\.auth\/nested/,
     });
     const sc = astToSchema(ast);
@@ -123,7 +123,7 @@ describe('astToSchema()', () => {
   describe('astToSchema()', () => {
     it('should properly add prefix for created TypeNames', () => {
       const ast = directoryToAst(module, {
-        relativePath: './__testSchema__',
+        rootDir: './__testSchema__',
         include: /query\.auth$|query\.auth\/nested/,
       });
       const sc = astToSchema(ast, { prefix: 'Corp', suffix: 'Old' });

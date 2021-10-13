@@ -2,13 +2,13 @@ import { directoryToAst } from '../directoryToAst';
 
 describe('directoryToAst()', () => {
   describe('Schema ./__testSchema__', () => {
-    const ast = directoryToAst(module, { relativePath: './__testSchema__' });
-
     it('should return root types', () => {
+      const ast = directoryToAst(module, { rootDir: './__testSchema__' });
       expect(Object.keys(ast.children)).toEqual(expect.arrayContaining(['query', 'mutation']));
     });
 
     it('query has proper values', () => {
+      const ast = directoryToAst(module, { rootDir: './__testSchema__' });
       expect(ast.children.query).toMatchSnapshot({
         name: 'query',
         kind: 'rootType',
@@ -55,6 +55,7 @@ describe('directoryToAst()', () => {
     });
 
     it('mutation has proper values', () => {
+      const ast = directoryToAst(module, { rootDir: './__testSchema__' });
       expect(ast.children.mutation).toMatchSnapshot({
         name: 'mutation',
         kind: 'rootType',

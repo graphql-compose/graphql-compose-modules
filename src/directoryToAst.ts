@@ -46,7 +46,7 @@ export const defaultOptions: DirectoryToAstOptions = {
 
 export interface DirectoryToAstOptions {
   /** Scan relative directory to `module` which was provided as a first arg to directoryToAst method. By default `.` */
-  relativePath?: string;
+  rootDir?: string;
   /** Which file extensions should be loaded. By default: .js, .ts */
   extensions?: string[];
   /** Regexp or custom function which determines should be loaded file/dir or not */
@@ -65,10 +65,17 @@ export function directoryToAst(
   m: NodeModule,
   options: DirectoryToAstOptions = defaultOptions
 ): AstRootNode {
+  // @ts-ignore
+  if (options?.relativePath) {
+    throw new Error(
+      'graphql-compose-modules: `relativePath` option is deprecated use `rootDir` instead'
+    );
+  }
+
   // if no path was passed in, assume the equivalent of __dirname from caller
   // otherwise, resolve path relative to the equivalent of __dirname
-  const schemaPath = options?.relativePath
-    ? resolve(dirname(m.filename), options.relativePath)
+  const schemaPath = options?.rootDir
+    ? resolve(dirname(m.filename), options.rootDir)
     : dirname(m.filename);
 
   // setup default options

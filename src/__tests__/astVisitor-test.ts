@@ -10,7 +10,7 @@ describe('astVisitor', () => {
   const schemaComposer = new SchemaComposer();
 
   beforeEach(() => {
-    ast = directoryToAst(module, { relativePath: './__testSchema__' });
+    ast = directoryToAst(module, { rootDir: './__testSchema__' });
     schemaComposer.clear();
   });
 

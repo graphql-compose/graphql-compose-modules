@@ -1,5 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
+  testEnvironment: 'node',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.json',
@@ -7,11 +8,27 @@ module.exports = {
       diagnostics: false,
     },
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'js'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.(ts|js)$': 'ts-jest',
   },
   roots: ['<rootDir>/src'],
   testPathIgnorePatterns: ['/node_modules/', '/lib/'],
   testMatch: ['**/__tests__/**/*-test.(ts|js)'],
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: 'coverage/junit/',
+        outputName: 'jest-junit.xml',
+        classNameTemplate: '{classname} › {title}',
+        titleTemplate: '{classname} › {title}',
+        suiteName: '{filepath}',
+        addFileAttribute: 'true',
+        ancestorSeparator: ' › ',
+        usePathForSuiteName: 'true',
+      },
+    ],
+  ],
 };
