@@ -37,6 +37,7 @@ describe('directoryToAst()', () => {
               name: 'index',
               absPath: expect.any(String),
               code: expect.any(Object),
+              fieldConfig: expect.any(Object),
             },
           },
           'some.nested': expect.objectContaining({ kind: 'file' }),

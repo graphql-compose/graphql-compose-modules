@@ -1,4 +1,12 @@
 import fs from 'fs';
+import {
+  dedent,
+  isComposeOutputType,
+  isFunction,
+  isSomeOutputTypeDefinitionString,
+  isWrappedTypeNameString,
+  Resolver,
+} from 'graphql-compose';
 import { join, resolve, dirname, basename } from 'path';
 import { FieldConfig, NamespaceConfig } from './typeDefs';
 
@@ -31,6 +39,12 @@ export interface AstFileNode extends AstBaseNode {
   code: {
     default?: FieldConfig | NamespaceConfig;
   };
+  /**
+   * This FieldConfig loaded from `code` and validated.
+   * This property is used by ast transformers and stores the last version of modified config.
+   * This value will be used by astToSchema method.
+   */
+  fieldConfig: FieldConfig;
 }
 
 export type RootTypeNames = 'query' | 'mutation' | 'subscription';
@@ -195,11 +209,16 @@ export function getAstForFile(
   if (absPath !== m.filename && checkInclusion(absPath, 'file', filename, options)) {
     // module name shouldn't include file extension
     const moduleName = filename.substring(0, filename.lastIndexOf('.'));
+    // namespace configs may not have `type` property
+    const checkType = moduleName !== 'index';
+    const code = m.require(absPath);
+    const fieldConfig = prepareFieldConfig(code, absPath, checkType);
     return {
       kind: 'file',
       name: moduleName,
       absPath,
-      code: m.require(absPath),
+      code,
+      fieldConfig,
     };
   }
 }
@@ -257,4 +276,63 @@ function checkInclusion(
   }
 
   return true;
+}
+
+function prepareFieldConfig(code: any, absPath: string, checkType = true): FieldConfig {
+  const _fc = code?.default;
+  if (!_fc || typeof _fc !== 'object') {
+    throw new Error(dedent`
+      GraphQL entrypoint MUST return FieldConfig as default export in '${absPath}'. 
+      Eg:
+        export default {
+          type: 'String',
+          resolve: () => Date.now(),
+        };
+    `);
+  }
+
+  let fc: FieldConfig;
+  if (code.default instanceof Resolver) {
+    fc = (code.default as Resolver).getFieldConfig() as any;
+  } else {
+    // recreate object for immutability purposes (do not change object in module definition)
+    // NB. I don't know should we here recreate (args, extensions) but let's keep them as is for now.
+    fc = { ...code.default };
+  }
+
+  if (checkType) {
+    if (!fc.type || !isSomeOutputTypeDefinition(fc.type)) {
+      throw new Error(dedent`
+      Module MUST return FieldConfig with correct 'type: xxx' property in '${absPath}'. 
+      Eg:
+        export default {
+          type: 'String'
+        };
+    `);
+    }
+  }
+
+  if (fc.resolve && typeof fc.resolve !== 'function') {
+    throw new Error(
+      `Cannot load entrypoint config from ${absPath}. 'resolve' property must be a function or undefined.`
+    );
+  }
+
+  return fc;
+}
+
+function isSomeOutputTypeDefinition(type: any): boolean {
+  if (typeof type === 'string') {
+    // type: 'String'
+    return isSomeOutputTypeDefinitionString(type) || isWrappedTypeNameString(type);
+  } else if (Array.isArray(type)) {
+    // type: ['String']
+    return isSomeOutputTypeDefinition(type[0]);
+  } else if (isFunction(type)) {
+    // pass thunked type without internal checks
+    return true;
+  } else {
+    // type: 'type User { name: String }'
+    return isComposeOutputType(type);
+  }
 }

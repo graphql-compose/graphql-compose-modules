@@ -93,6 +93,7 @@ Object {
       "namespaceConfig": Object {
         "absPath": Any<String>,
         "code": Any<Object>,
+        "fieldConfig": Any<Object>,
         "kind": "file",
         "name": "index",
       },

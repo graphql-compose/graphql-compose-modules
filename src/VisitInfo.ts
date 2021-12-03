@@ -133,9 +133,10 @@ export class VisitInfo<TNode extends AstDirNode | AstFileNode | AstRootTypeNode,
   get fieldConfig(): FieldConfig {
     const node = this.node;
     if (node.kind === 'file') {
-      return node.code?.default as FieldConfig;
+      return node.fieldConfig;
     } else if (node.kind === 'dir' || this.node.kind === 'rootType') {
-      return node.namespaceConfig?.code?.default as FieldConfig;
+      // TODO: think about namespaceConfig (how to do it not null)
+      return node.namespaceConfig?.fieldConfig as any;
     }
     throw new Error(`Cannot get fieldConfig. Node has some strange kind: ${node.kind}`);
   }

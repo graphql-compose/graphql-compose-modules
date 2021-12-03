@@ -52,7 +52,7 @@ function _getArgsForQuery(
   varNames.forEach((varName) => {
     if (!argNames.includes(varName)) {
       throw new Error(
-        `FieldConfig does not have '${varName}' argument. Avaliable arguments: '${argNames.join(
+        `FieldConfig does not have '${varName}' argument. Available arguments: '${argNames.join(
           "', '"
         )}'.`
       );

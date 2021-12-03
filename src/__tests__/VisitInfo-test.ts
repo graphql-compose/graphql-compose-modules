@@ -15,12 +15,11 @@ const nodeParent = {
 } as AstRootNode;
 const node = {
   absPath: 'schema/query/some_endpoint.ts',
-  code: {
-    default: {
-      type: 'String',
-      resolve: () => 'Hello!',
-    },
-  },
+  code: {},
+  fieldConfig: {
+    type: 'String',
+    resolve: () => 'Hello!',
+  } as any,
   kind: 'file',
   name: 'some_endpoint',
 } as AstFileNode;
@@ -121,7 +120,7 @@ describe('VisitInfo', () => {
       operation: 'query',
       fieldName: 'ping',
       fieldPath: ['query.storage', 'viewer', 'utils.debug'],
-      node,
+      node: { ...node, fieldConfig: { ...node.fieldConfig } },
       nodeParent,
       schemaComposer,
     });

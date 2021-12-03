@@ -5,15 +5,11 @@ import {
   ObjectTypeComposerFieldConfig,
   isOutputTypeDefinitionString,
   isWrappedTypeNameString,
-  isComposeOutputType,
-  isSomeOutputTypeDefinitionString,
   inspect,
-  isFunction,
 } from 'graphql-compose';
 import { AstRootNode, AstRootTypeNode, AstDirNode, AstFileNode } from './directoryToAst';
 import dedent from 'dedent';
 import { GraphQLObjectType } from 'graphql';
-import { FieldConfig, NamespaceConfig } from './typeDefs';
 
 export interface AstToSchemaOptions {
   /**
@@ -109,7 +105,7 @@ export function createFields(
 
   if (ast.kind === 'file') {
     parent.addNestedFields({
-      [name]: prepareFieldConfig(ast) as FieldConfig,
+      [name]: ast.fieldConfig,
     });
     return;
   }
@@ -171,18 +167,7 @@ function prepareNamespaceFieldConfig(
   ast: AstFileNode,
   typename: string
 ): ObjectTypeComposerFieldConfig<any, any> {
-  if (!ast.code.default) {
-    throw new Error(dedent`
-      NamespaceModule MUST return FieldConfig as default export in '${ast.absPath}'. 
-      Eg:
-        export default {
-          type: 'SomeObjectTypeName',
-          resolve: () => ({}),
-        };
-    `);
-  }
-
-  const fc: any = ast.code.default;
+  const fc = ast.fieldConfig as any;
 
   if (!fc.type) {
     fc.type = sc.createObjectTC(typename);
@@ -217,47 +202,4 @@ function prepareNamespaceFieldConfig(
   }
 
   return fc;
-}
-
-function prepareFieldConfig(ast: AstFileNode): FieldConfig | NamespaceConfig {
-  const fc = ast.code.default;
-
-  if (!fc) {
-    throw new Error(dedent`
-      Module MUST return FieldConfig as default export in '${ast.absPath}'. 
-      Eg:
-        export default {
-          type: 'String',
-          resolve: () => Date.now(),
-        };
-    `);
-  }
-
-  if (!fc.type || !isSomeOutputTypeDefinition(fc.type)) {
-    throw new Error(dedent`
-      Module MUST return FieldConfig with correct 'type: xxx' property in '${ast.absPath}'. 
-      Eg:
-        export default {
-          type: 'String'
-        };
-    `);
-  }
-
-  return fc;
-}
-
-function isSomeOutputTypeDefinition(type: any): boolean {
-  if (typeof type === 'string') {
-    // type: 'String'
-    return isSomeOutputTypeDefinitionString(type) || isWrappedTypeNameString(type);
-  } else if (Array.isArray(type)) {
-    // type: ['String']
-    return isSomeOutputTypeDefinition(type[0]);
-  } else if (isFunction(type)) {
-    // pass thunked type without internal checks
-    return true;
-  } else {
-    // type: 'type User { name: String }'
-    return isComposeOutputType(type);
-  }
 }
