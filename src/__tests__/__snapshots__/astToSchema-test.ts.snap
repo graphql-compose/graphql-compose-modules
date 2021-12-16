@@ -63,7 +63,7 @@ type MutationLogsNested {
 }
 
 type MutationAuth {
-  # Login operation
+  \\"\\"\\"Login operation\\"\\"\\"
   login(email: String, password: String): Boolean
   logout: Boolean
   nested: MutationAuthNested
@@ -76,6 +76,5 @@ type MutationAuthNested {
 type MutationUser {
   create: Boolean
   update: Boolean
-}
-"
+}"
 `;

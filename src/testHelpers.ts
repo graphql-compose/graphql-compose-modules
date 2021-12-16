@@ -115,7 +115,7 @@ export async function testOperationData(
     throw new Error((res?.errors?.[0] as any) || 'GraphQL Error');
   }
 
-  return res?.data?.field;
+  return res?.data?.field as any;
 }
 
 export async function testOperationErrors(

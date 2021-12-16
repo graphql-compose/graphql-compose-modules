@@ -194,16 +194,16 @@ describe('astVisitor', () => {
       },
     });
     const schema = astToSchema(ast).buildSchema();
-    const result = await graphql(
+    const result = await graphql({
       schema,
-      `
+      source: `
         mutation {
           auth {
             login(email: "a@b.c", password: "123")
           }
         }
-      `
-    );
+      `,
+    });
     expect(result).toEqual({ data: { auth: { login: true } } });
     expect(logs).toEqual([
       {

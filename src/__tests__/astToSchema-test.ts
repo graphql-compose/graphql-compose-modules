@@ -15,7 +15,7 @@ describe('astToSchema()', () => {
     });
 
     it('schema', async () => {
-      const printedSchema = await printSchema(sc.buildSchema(), { commentDescriptions: true });
+      const printedSchema = await printSchema(sc.buildSchema());
       expect(printedSchema).toMatchSnapshot();
     });
   });
