@@ -56,7 +56,7 @@ export function astToSchema<TContext = any>(
   if (opts?.schemaComposer) {
     if (!opts.schemaComposer) {
       throw new Error(dedent`
-        Provided option 'schemaComposer' should be an instance of SchemaComposer class from 'graphql-compose' package. 
+        Provided option 'schemaComposer' should be an instance of SchemaComposer class from 'graphql-compose' package.
         Received:
           ${inspect(opts.schemaComposer)}
       `);
@@ -121,7 +121,7 @@ export function createFields(
 
     parent.addNestedFields({
       [name]: {
-        resolve: () => ({}),
+        resolve: (source) => source,
         ...fc,
       },
     });
@@ -178,7 +178,7 @@ function prepareNamespaceFieldConfig(
           You provide incorrect output type definition:
             ${fc.type}
           It must be valid TypeName or output type SDL definition:
-          
+
           Eg.
             type Payload { me: String }
           OR
